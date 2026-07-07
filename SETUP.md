@@ -26,10 +26,10 @@ o Claude não tem como. Siga os passos abaixo na ordem. Ao final, o painel está
 2. Crie **duas abas** com estes nomes exatos (respeite maiúsculas/acentos):
    - `Processos`
    - `Movimentacoes` (sem acento no "ç" — é só a aba; o painel usa esse nome exato)
-3. Na aba **Processos**, cole na **linha 1** (cabeçalho), uma coluna por célula A1..M1:
+3. Na aba **Processos**, cole na **linha 1** (cabeçalho), uma coluna por célula A1..R1:
 
 ```
-Numero_Processo	Numero_Unico	Vara	Requerente	Requerido	Situacao	Fase_Atual	Data_Ultima_Mov	Descricao_Ultima_Mov	Status_Perito	Data_Ultima_Acao_Perito	Pendencia_Ativa	Data_Ultima_Atualizacao_Painel
+Numero_Processo	Numero_Unico	Vara	Requerente	Requerido	Situacao	Fase_Atual	Data_Ultima_Mov	Descricao_Ultima_Mov	Nomeado	Laudo_Entregue	Data_Laudo	Honorarios_Arbitrados	Valor_Honorarios	Alvara_Status	Data_Alvara	Pendencia_Perito	Data_Ultima_Atualizacao_Painel
 ```
 
 4. Na aba **Movimentacoes**, cole na **linha 1**, A1..F1:
@@ -47,9 +47,19 @@ cabeça com o Sheets convertendo datas, deixe as colunas de data como **texto si
 
 **Regras dos valores** (o painel espera exatamente estes):
 - `Situacao`: `Em andamento`, `Suspenso`, `Julgado`, `Arquivado`
-- `Status_Perito`: `Não nomeado`, `Nomeado`, `Aguardando laudo`, `Laudo entregue`, `Aguardando honorários`, `Honorários pagos`, `Concluído`
-- `Envolve_Perito`: `SIM` ou `NÃO`
-- `ID_Unico` (na aba Movimentacoes): `Numero_Processo|Data_Movimento|Tipo_Movimento` — é a chave anti-duplicação. Se preencher à mão, siga esse padrão; via painel/sync é gerado sozinho.
+- `Nomeado`, `Laudo_Entregue`, `Honorarios_Arbitrados`: `SIM` ou `NÃO`
+- `Alvara_Status`: `Sem alvará`, `Expedido`, `Disponível` ou `Recebido`
+  (o painel destaca "A RECEBER" quando é Expedido/Disponível/Liberado, e "Recebido"
+  quando houve levantamento/pagamento)
+- `Pendencia_Perito`: texto livre — SÓ pendências do perito (ex: "aguardando eu enviar
+  o laudo", "aguardando levantamento do alvará"). Vazio = sem pendência do perito.
+- `Envolve_Perito` (aba Movimentacoes): `SIM` ou `NÃO`
+- `ID_Unico` (aba Movimentacoes): `Numero_Processo|Data_Movimento|Tipo_Movimento` — chave
+  anti-duplicação. Se preencher à mão, siga esse padrão; via sync é gerado sozinho.
+
+**O painel deriva sozinho** (não precisa de coluna): as "etapas cumpridas" (Nomeado →
+Laudo → Honorários → Alvará → Recebido) e o card "Alvará a receber" saem desses campos.
+`Numero_Processo` é o número resumido (ex: `202552000005`); `Numero_Unico` é o CNJ.
 
 ---
 
