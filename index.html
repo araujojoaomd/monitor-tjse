@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitoramento de Processos — TJSE</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:#1A2740;min-height:100vh}
+.pnl-header{background:#1F3864;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(31,56,100,.18)}
+.pnl-header-inner{display:flex;align-items:stretch;max-width:1500px;margin:0 auto}
+.pnl-header-brand{padding:14px 28px;flex:1;display:flex;align-items:center;gap:16px}
+.pnl-header-brand-text{display:flex;flex-direction:column;min-width:0}
+.pnl-header-brand .supra{font-size:10px;letter-spacing:2px;color:#7BAFD4;text-transform:uppercase;margin-bottom:2px}
+.pnl-header-brand .titulo{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.pnl-header-right{background:#2E5FA3;padding:14px 28px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px}
+.pnl-header-right .lbl{font-size:10px;color:#AACCE8;letter-spacing:1.5px;text-transform:uppercase}
+.pnl-header-right .dt{font-size:13px;font-weight:600;color:#fff;font-family:'DM Mono',monospace}
+.pnl-header-right .usr{font-size:10.5px;color:#AACCE8;margin-top:4px;display:flex;align-items:center;gap:8px}
+.btn-sair{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:10px;padding:2px 9px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-sair:hover{background:rgba(255,255,255,.18)}
+.abar{background:#FFF7ED;border-bottom:2px solid #FED7AA;padding:10px 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;font-size:12.5px;font-weight:500;color:#92400E}
+.abar.off{display:none}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 28px;background:#EEF4FB;border-bottom:1px solid #E2EAF4;max-width:1500px;margin:0 auto;width:100%}
+.card{background:#fff;border:0.5px solid #E2EAF4;border-radius:12px;padding:12px 16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px}
+.card:hover{border-color:#2E5FA3;transform:translateY(-1px);box-shadow:0 4px 12px rgba(31,56,100,.08)}
+.card.sel{border:1.5px solid #2E5FA3;box-shadow:0 4px 12px rgba(31,56,100,.1)}
+.card .num{font-size:24px;font-weight:700;line-height:1}
+.card .leg{font-size:11px;color:#64748B;font-weight:500;margin-top:2px}
+.c-tot{color:#1F3864}.c-pend{color:#DC2626}.c-laudo{color:#6B21A8}.c-hon{color:#16A34A}
+.filtros{max-width:1500px;margin:0 auto;padding:12px 28px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid #E2EAF4;background:#fff}
+.filtros select,.filtros input{font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid #E2EAF4;background:#fff;font-family:'DM Sans',sans-serif;color:#1A2740}
+.filtros select{cursor:pointer}
+.filtros input.busca{min-width:200px}
+.sep{flex:1}
+.cont-label{font-size:12px;color:#64748B}
+.btn-atualizar{font-size:12px;padding:6px 14px;border-radius:20px;border:1px solid #E2EAF4;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;color:#1A2740;transition:all .15s}
+.btn-atualizar:hover{border-color:#2E5FA3}
+.btn-novo{background:#1F3864;color:#fff;border:none;border-radius:20px;padding:6px 16px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-novo:hover{background:#2E5FA3}
+.tabela-wrap{max-width:1500px;margin:0 auto;padding:16px 28px 40px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #E2EAF4;box-shadow:0 2px 12px rgba(31,56,100,.06);table-layout:fixed}
+thead tr{background:#1F3864}
+thead th{padding:11px 14px;text-align:left;font-size:10px;font-weight:600;color:#AACCE8;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;overflow:hidden}
+tbody tr{border-bottom:1px solid #E2EAF4;transition:background .1s;cursor:pointer}
+tbody tr:hover{background:#EEF4FB}
+td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
+.td-proc{width:170px;font-family:'DM Mono',monospace;font-size:11.5px;color:#1F3864;font-weight:500}
+.td-vara{width:150px;font-size:12px}
+.td-req{font-weight:500;line-height:1.35;font-size:12.5px}
+.td-sit{width:120px}
+.td-perito{width:150px}
+.td-mov{width:210px}
+.td-pend{width:180px;font-size:12px;color:#92400E}
+.td-acoes{width:70px;text-align:center;white-space:nowrap}
+.mov-data{font-family:'DM Mono',monospace;font-size:11px;color:#64748B}
+.mov-desc{font-size:12px;line-height:1.3;color:#1A2740;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}
+.badge::before{content:"●";font-size:6px}
+.badge-andamento{background:#EFF6FF;color:#1E40AF}
+.badge-suspenso{background:#FFF7ED;color:#B45309}
+.badge-julgado{background:#F0FDF4;color:#15803D}
+.badge-arquivado{background:#F1F5F9;color:#475569}
+.pbadge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:142px}
+.p-nnom{background:#F1F5F9;color:#475569}
+.p-nom{background:#EEF4FB;color:#1F3864}
+.p-aguard{background:#F3E8FF;color:#6B21A8}
+.p-laudo{background:#EFF6FF;color:#1E40AF}
+.p-hon{background:#FEF9C3;color:#854D0E}
+.p-pago{background:#F0FDF4;color:#15803D}
+.p-concl{background:#F0FDF4;color:#15803D}
+.tag-perito{display:inline-block;background:#F3E8FF;color:#6B21A8;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;border:1px solid #E9D5FF}
+.btn-icon{background:none;border:1px solid #E2EAF4;border-radius:8px;padding:4px 7px;cursor:pointer;font-size:12px;color:#64748B;transition:all .15s;margin:0 2px;display:inline-flex;align-items:center;gap:3px;font-family:'DM Sans',sans-serif}
+.btn-icon:hover{border-color:#2E5FA3;color:#2E5FA3}
+.vazio{text-align:center;padding:60px;color:#64748B;font-size:13px;display:none}
+.loading{text-align:center;padding:60px;color:#64748B;font-size:13px}
+.rodape{text-align:center;padding:16px;font-size:11px;color:#64748B;border-top:1px solid #E2EAF4;background:#fff}
+.modal-bg{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);display:flex;align-items:flex-start;justify-content:center;padding:60px 20px;z-index:500;overflow-y:auto}
+.modal-bg.off{display:none}
+.modal{background:#fff;border-radius:16px;border:1px solid #E2EAF4;width:100%;max-width:640px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.modal-title{font-size:15px;font-weight:600}
+.modal-sub{font-size:11.5px;color:#64748B;font-family:'DM Mono',monospace;margin-bottom:16px}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#64748B;line-height:1;padding:0 4px}
+.modal-section{margin-bottom:18px}
+.modal-section-title{font-size:11px;font-weight:600;color:#64748B;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.tl-item{padding:9px 12px;background:#F8FAFC;border-radius:8px;margin-bottom:6px;border-left:3px solid #CBD5E1}
+.tl-item.perito{border-left-color:#8B5CF6;background:#FAF5FF}
+.tl-top{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap}
+.tl-data{font-size:10.5px;color:#64748B;font-family:'DM Mono',monospace}
+.tl-tipo{font-size:10.5px;font-weight:600;color:#2E5FA3}
+.tl-desc{font-size:12.5px;line-height:1.4}
+.tl-toggle{font-size:10.5px;font-weight:500;color:#6B21A8;cursor:pointer;user-select:none;text-transform:none;letter-spacing:0}
+.tl-toggle input{vertical-align:middle;margin-right:4px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-grid.full{grid-template-columns:1fr}
+.form-grid.tri{grid-template-columns:1fr 1fr 1fr}
+.form-field{display:flex;flex-direction:column;gap:5px}
+.form-field label{font-size:11px;font-weight:600;color:#64748B;letter-spacing:.5px;text-transform:uppercase}
+.form-field input,.form-field select,.form-field textarea{font-size:13px;padding:8px 12px;border-radius:8px;border:1px solid #E2EAF4;font-family:'DM Sans',sans-serif;color:#1A2740;background:#fff}
+.form-field textarea{resize:none;height:60px}
+.form-acoes{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+.btn-cancelar{background:none;border:1px solid #E2EAF4;border-radius:8px;padding:8px 18px;font-size:13px;cursor:pointer;color:#64748B;font-family:'DM Sans',sans-serif}
+.btn-confirmar{background:#1F3864;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-confirmar:disabled{opacity:.6;cursor:default}
+.login-tela{position:fixed;inset:0;background:linear-gradient(135deg,#1F3864 0%,#2E5FA3 100%);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.login-card{background:#fff;padding:36px 40px;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.25);max-width:380px;width:100%;text-align:center}
+.login-supra{font-size:10px;letter-spacing:2px;color:#7BAFD4;text-transform:uppercase;margin-bottom:6px;font-weight:600}
+.login-titulo{font-size:20px;font-weight:700;color:#1F3864;margin-bottom:6px}
+.login-sub{font-size:13px;color:#64748B;margin-bottom:24px;line-height:1.5}
+#g_id_signin{display:flex;justify-content:center;margin-bottom:8px;min-height:44px}
+.login-erro{background:#FEF2F2;color:#B91C1C;border-radius:8px;padding:10px 14px;font-size:12px;margin-top:16px;line-height:1.4;text-align:left}
+.login-loading{font-size:12px;color:#64748B;margin-top:12px}
+.toast{position:fixed;bottom:24px;right:24px;background:#1F3864;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:600;opacity:0;transform:translateY(10px);transition:all .25s}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.err{background:#B91C1C}
+@media(max-width:768px){
+  .pnl-header-inner{flex-direction:column}
+  .cards{padding:12px 16px;grid-template-columns:repeat(2,1fr)}
+  .filtros{padding:10px 16px}
+  .tabela-wrap{padding:12px 16px 32px}
+  td{padding:9px 10px;font-size:12px}
+  .td-vara,.td-mov,.td-pend{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="login-tela" id="loginTela">
+  <div class="login-card">
+    <div class="login-supra">Perícia Judicial · TJSE</div>
+    <div class="login-titulo">Monitoramento de Processos</div>
+    <div class="login-sub">Entre com a conta Google que tem acesso à planilha.</div>
+    <div id="g_id_signin"></div>
+    <div class="login-loading" id="loginLoading" style="display:none">Verificando acesso…</div>
+    <div class="login-erro" id="loginErro" style="display:none"></div>
+  </div>
+</div>
+
+<div id="appConteudo" style="display:none">
+<div class="pnl-header">
+  <div class="pnl-header-inner">
+    <div class="pnl-header-brand">
+      <div class="pnl-header-brand-text">
+        <div class="supra">Perícia Judicial · Tribunal de Justiça de Sergipe</div>
+        <div class="titulo">Monitoramento de Processos</div>
+      </div>
+    </div>
+    <div class="pnl-header-right">
+      <div class="lbl">Atualizado em</div>
+      <div class="dt" id="dt">—</div>
+      <div class="usr"><span id="userEmail"></span><button class="btn-sair" onclick="sair()">Sair</button></div>
+    </div>
+  </div>
+</div>
+<div class="abar off" id="abar">⚠ <span id="atxt"></span></div>
+<div style="background:#EEF4FB;border-bottom:1px solid #E2EAF4">
+  <div class="cards">
+    <div class="card sel" id="card-todos" onclick="filtrar('foco','todos')">
+      <div><div class="num c-tot" id="n-tot">—</div><div class="leg">Processos ativos</div></div>
+    </div>
+    <div class="card" id="card-pend" onclick="filtrar('foco','pendencia')">
+      <div><div class="num c-pend" id="n-pend">—</div><div class="leg">Com pendência ativa</div></div>
+    </div>
+    <div class="card" id="card-laudo" onclick="filtrar('foco','laudo')">
+      <div><div class="num c-laudo" id="n-laudo">—</div><div class="leg">Aguardando meu laudo</div></div>
+    </div>
+    <div class="card" id="card-hon" onclick="filtrar('foco','honorarios')">
+      <div><div class="num c-hon" id="n-hon">—</div><div class="leg">Honorários a receber</div></div>
+    </div>
+  </div>
+</div>
+<div class="filtros">
+  <input class="busca" type="text" id="fBusca" placeholder="🔎 Buscar processo, vara, requerente..." oninput="filtrar('busca',this.value)">
+  <select id="fSituacao" onchange="filtrar('situacao',this.value)">
+    <option value="ativos">Situação: ativos</option>
+    <option value="todos">Todas as situações</option>
+  </select>
+  <select id="fVara" onchange="filtrar('vara',this.value)"><option value="todas">Todas as varas</option></select>
+  <select id="fPerito" onchange="filtrar('perito',this.value)"><option value="todos">Todo status do perito</option></select>
+  <div class="sep"></div>
+  <span class="cont-label" id="contLabel"></span>
+  <button class="btn-atualizar" onclick="carregarDados()">↻ Atualizar</button>
+  <button class="btn-novo" onclick="abrirNovoProcesso()">+ Novo processo</button>
+</div>
+<div class="tabela-wrap">
+  <div class="loading" id="loading">Carregando dados da planilha...</div>
+  <table id="tab" style="display:none">
+    <thead><tr>
+      <th class="td-proc">Nº do Processo</th>
+      <th class="td-vara">Vara</th>
+      <th class="td-req">Requerente</th>
+      <th class="td-sit">Situação</th>
+      <th class="td-perito">Status do Perito</th>
+      <th class="td-mov">Última Movimentação</th>
+      <th class="td-pend">Pendência Ativa</th>
+      <th class="td-acoes"></th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="vazio" id="vazio">Nenhum processo encontrado.</div>
+</div>
+<div class="rodape">Monitoramento de processos periciais — uso pessoal</div>
+</div>
+
+<div class="modal-bg off" id="modalBg">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitulo">—</span>
+      <button class="modal-close" onclick="fecharModal()">×</button>
+    </div>
+    <div class="modal-sub" id="modalSub"></div>
+    <div id="modalCorpo"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CONFIG — preencher após o setup no Google (ver SETUP.md) =====
+const CLIENT_ID = '864961214405-bipsb4fk0sr0sgi8m9ei81u87rhjshc4.apps.googleusercontent.com';
+const API_URL   = 'https://script.google.com/macros/s/AKfycbzCqZAEymHI5HWJwerTUT0Fk_PbMC5gbGXoF5FksasepM3Kk-BRBOlHYp6xP3wBlRnSNA/exec';
+
+const SITUACOES = ["Em andamento","Suspenso","Julgado","Arquivado"];
+const STATUS_PERITO = ["Não nomeado","Nomeado","Aguardando laudo","Laudo entregue","Aguardando honorários","Honorários pagos","Concluído"];
+const REQUERIDO_PADRAO = "Banco do Brasil";
+
+let idToken = null, userEmail = null;
+let PROCESSOS = [], MOVS = [];
+let F = {foco:"todos", situacao:"ativos", vara:"todas", perito:"todos", busca:""};
+
+// === LOGIN ===
+function aguardarGSI(cb){
+  if (window.google && window.google.accounts && window.google.accounts.id) return cb();
+  setTimeout(function(){ aguardarGSI(cb); }, 100);
+}
+window.addEventListener('load', function(){
+  aguardarGSI(function(){
+    google.accounts.id.initialize({
+      client_id: CLIENT_ID,
+      callback: aposLogin,
+      auto_select: true,
+      cancel_on_tap_outside: false
+    });
+    google.accounts.id.renderButton(
+      document.getElementById('g_id_signin'),
+      {theme:'filled_blue', size:'large', text:'signin_with', shape:'pill', width:300}
+    );
+    google.accounts.id.prompt();
+  });
+});
+
+async function aposLogin(response){
+  idToken = response.credential;
+  try {
+    const payload = JSON.parse(atob(idToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    userEmail = payload.email;
+  } catch(e) { userEmail = '—'; }
+  document.getElementById('loginErro').style.display = 'none';
+  document.getElementById('loginLoading').style.display = '';
+  const r = await chamar({acao:'ler'});
+  document.getElementById('loginLoading').style.display = 'none';
+  if (r.ok) {
+    document.getElementById('loginTela').style.display = 'none';
+    document.getElementById('appConteudo').style.display = '';
+    document.getElementById('userEmail').textContent = userEmail;
+    aplicarDados(r);
+  } else if (r.erro === 'sem_acesso') {
+    mostrarErroLogin('A conta ' + userEmail + ' não tem acesso à planilha. Compartilhe a planilha com essa conta e tente novamente.');
+  } else if (r.erro === 'token_invalido' || r.erro === 'sem_token') {
+    mostrarErroLogin('Sessão inválida. Tente entrar novamente.');
+  } else {
+    mostrarErroLogin('Erro: ' + (r.erro || 'desconhecido'));
+  }
+}
+
+function mostrarErroLogin(msg){
+  const el = document.getElementById('loginErro');
+  el.textContent = msg;
+  el.style.display = '';
+}
+
+function sair(){
+  google.accounts.id.disableAutoSelect();
+  idToken = null; userEmail = null;
+  location.reload();
+}
+
+async function chamar(payload){
+  payload.idToken = idToken;
+  try {
+    const r = await fetch(API_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    });
+    const dados = await r.json();
+    if (!dados.ok && (dados.erro === 'token_invalido' || dados.erro === 'sem_token')) {
+      toast('Sessão expirada. Reconectando…', true);
+      setTimeout(function(){ location.reload(); }, 800);
+    }
+    return dados;
+  } catch(e){
+    return {ok:false, erro: String(e)};
+  }
+}
+
+function aplicarDados(r){
+  PROCESSOS = r.processos || [];
+  MOVS = r.movimentacoes || [];
+  popularVaras();
+  popularPeritoFiltro();
+  render();
+}
+
+async function carregarDados(){
+  if (!idToken) return;
+  document.getElementById("loading").style.display = "block";
+  document.getElementById("tab").style.display = "none";
+  document.getElementById("vazio").style.display = "none";
+  const r = await chamar({acao:'ler'});
+  if (!r.ok) {
+    document.getElementById("loading").textContent = "Erro: " + (r.erro || 'desconhecido');
+    return;
+  }
+  aplicarDados(r);
+  toast('Dados atualizados');
+}
+
+// === HELPERS ===
+function parseData(s){ if (!s) return null; const p = String(s).split("/"); if (p.length!==3) return null; return new Date(+p[2], +p[1]-1, +p[0]); }
+function ativo(p){ return (p["Situacao"]||"").trim() !== "Arquivado"; }
+function temPendencia(p){ return !!(p["Pendencia_Ativa"]||"").trim(); }
+function aguardandoLaudo(p){ return (p["Status_Perito"]||"").trim() === "Aguardando laudo"; }
+function aguardandoHon(p){ return (p["Status_Perito"]||"").trim() === "Aguardando honorários"; }
+function movsDoProcesso(num){
+  return MOVS.filter(m => String(m["Numero_Processo"]) === String(num))
+    .sort((a,b) => (parseData(b["Data_Movimento"])||0) - (parseData(a["Data_Movimento"])||0));
+}
+function diasDesde(s){ const d = parseData(s); if (!d) return null; const h = new Date(); h.setHours(0,0,0,0); return Math.floor((h - d)/86400000); }
+
+function classeSituacao(s){
+  s = (s||"").trim();
+  if (s === "Em andamento") return "badge-andamento";
+  if (s === "Suspenso") return "badge-suspenso";
+  if (s === "Julgado") return "badge-julgado";
+  return "badge-arquivado";
+}
+function classePerito(s){
+  s = (s||"").trim();
+  if (s === "Nomeado") return "p-nom";
+  if (s === "Aguardando laudo") return "p-laudo";
+  if (s === "Laudo entregue") return "p-aguard";
+  if (s === "Aguardando honorários") return "p-hon";
+  if (s === "Honorários pagos" || s === "Concluído") return "p-pago";
+  return "p-nnom";
+}
+
+function popularVaras(){
+  const sel = document.getElementById("fVara");
+  const val = sel.value;
+  while (sel.options.length > 1) sel.remove(1);
+  const varas = [...new Set(PROCESSOS.map(p => (p["Vara"]||"").trim()).filter(Boolean))].sort();
+  varas.forEach(v => { const o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o); });
+  if ([...sel.options].some(o => o.value === val)) sel.value = val;
+}
+function popularPeritoFiltro(){
+  const sel = document.getElementById("fPerito");
+  const val = sel.value;
+  while (sel.options.length > 1) sel.remove(1);
+  STATUS_PERITO.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; sel.appendChild(o); });
+  if ([...sel.options].some(o => o.value === val)) sel.value = val;
+}
+
+function filtrar(campo, val){
+  F[campo] = val;
+  if (campo === "foco") {
+    document.querySelectorAll(".card").forEach(c => c.classList.remove("sel"));
+    const m = {todos:"card-todos", pendencia:"card-pend", laudo:"card-laudo", honorarios:"card-hon"};
+    document.getElementById(m[val]).classList.add("sel");
+  }
+  render();
+}
+
+function processosFiltrados(){
+  const q = F.busca.trim().toLowerCase();
+  return PROCESSOS.filter(p => {
+    if (F.situacao === "ativos" && !ativo(p)) return false;
+    if (F.situacao !== "ativos" && F.situacao !== "todos" && (p["Situacao"]||"").trim() !== F.situacao) return false;
+    if (F.vara !== "todas" && (p["Vara"]||"").trim() !== F.vara) return false;
+    if (F.perito !== "todos" && (p["Status_Perito"]||"").trim() !== F.perito) return false;
+    if (F.foco === "pendencia" && !temPendencia(p)) return false;
+    if (F.foco === "laudo" && !aguardandoLaudo(p)) return false;
+    if (F.foco === "honorarios" && !aguardandoHon(p)) return false;
+    if (q) {
+      const blob = [p["Numero_Unico"],p["Numero_Processo"],p["Vara"],p["Requerente"],p["Fase_Atual"],p["Pendencia_Ativa"]].join(" ").toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function render(){
+  const ativos = PROCESSOS.filter(ativo);
+  document.getElementById("n-tot").textContent = ativos.length;
+  document.getElementById("n-pend").textContent = ativos.filter(temPendencia).length;
+  document.getElementById("n-laudo").textContent = ativos.filter(aguardandoLaudo).length;
+  document.getElementById("n-hon").textContent = ativos.filter(aguardandoHon).length;
+
+  // barra de alerta
+  const msgs = [];
+  const laudoAtrasado = ativos.filter(p => aguardandoLaudo(p) && (diasDesde(p["Data_Ultima_Acao_Perito"]) ?? 0) > 30).length;
+  if (laudoAtrasado) msgs.push(laudoAtrasado + " laudo(s) pendente(s) há mais de 30 dias");
+  const movRecente = ativos.filter(p => { const d = diasDesde(p["Data_Ultima_Mov"]); return d !== null && d <= 7; }).length;
+  if (movRecente) msgs.push(movRecente + " processo(s) com movimentação nos últimos 7 dias");
+  const semStatus = ativos.filter(p => !(p["Status_Perito"]||"").trim()).length;
+  if (semStatus) msgs.push(semStatus + " sem status do perito definido");
+  const abar = document.getElementById("abar");
+  if (msgs.length) { abar.classList.remove("off"); document.getElementById("atxt").textContent = msgs.join(" · "); }
+  else abar.classList.add("off");
+
+  const filtrados = processosFiltrados();
+  document.getElementById("contLabel").textContent = filtrados.length === PROCESSOS.length
+    ? filtrados.length + " processos"
+    : filtrados.length + " de " + PROCESSOS.length + " processos";
+
+  const tbody = document.getElementById("tbody"), vazio = document.getElementById("vazio"), tab = document.getElementById("tab");
+  document.getElementById("loading").style.display = "none";
+  tbody.innerHTML = "";
+  if (!filtrados.length) { tab.style.display = "none"; vazio.style.display = "block"; return; }
+  tab.style.display = ""; vazio.style.display = "none";
+
+  filtrados.forEach(p => {
+    const num = p["Numero_Processo"];
+    const tr = document.createElement("tr");
+    tr.onclick = function(e){ if (e.target.closest('.btn-icon')) return; abrirProcesso(num); };
+    const sit = (p["Situacao"]||"—").trim() || "—";
+    const per = (p["Status_Perito"]||"").trim();
+    const perBadge = per ? '<span class="pbadge '+classePerito(per)+'">'+per+'</span>' : '<span style="color:#94A3B8;font-size:11px">—</span>';
+    const dataMov = p["Data_Ultima_Mov"] || "";
+    const descMov = p["Descricao_Ultima_Mov"] || "";
+    const movHtml = (dataMov || descMov)
+      ? '<div class="mov-data">'+(dataMov||"—")+'</div><div class="mov-desc">'+descMov+'</div>'
+      : '<span style="color:#94A3B8;font-size:11px">Sem movimentação</span>';
+    const nMovsPerito = movsDoProcesso(num).filter(m => (m["Envolve_Perito"]||"").toUpperCase().startsWith("S")).length;
+    tr.innerHTML =
+        '<td class="td-proc">'+(p["Numero_Unico"]||p["Numero_Processo"]||"—")+'</td>'
+      + '<td class="td-vara">'+(p["Vara"]||"—")+'</td>'
+      + '<td class="td-req">'+(p["Requerente"]||"—")+'</td>'
+      + '<td class="td-sit"><span class="badge '+classeSituacao(sit)+'">'+sit+'</span></td>'
+      + '<td class="td-perito">'+perBadge+(nMovsPerito?' <span class="tag-perito">'+nMovsPerito+'</span>':'')+'</td>'
+      + '<td class="td-mov">'+movHtml+'</td>'
+      + '<td class="td-pend">'+((p["Pendencia_Ativa"]||"").trim()||'<span style="color:#94A3B8">—</span>')+'</td>'
+      + '<td class="td-acoes"><button class="btn-icon" onclick=\'abrirProcesso('+JSON.stringify(num)+')\' title="Detalhes">🔍</button></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// === DETALHE DO PROCESSO ===
+let soPerito = false;
+let _procAtual = null;
+function abrirProcesso(num){
+  const p = PROCESSOS.find(x => String(x["Numero_Processo"]) === String(num));
+  if (!p) return;
+  _procAtual = num;
+  document.getElementById("modalTitulo").textContent = p["Requerente"] || "Processo";
+  document.getElementById("modalSub").textContent = (p["Numero_Unico"]||p["Numero_Processo"]||"") + "  ·  " + (p["Vara"]||"") + "  ·  Requerido: " + (p["Requerido"]||REQUERIDO_PADRAO);
+
+  const sitOpts = SITUACOES.map(s => '<option value="'+s+'"'+((p["Situacao"]||"").trim()===s?' selected':'')+'>'+s+'</option>').join("");
+  const perOpts = ['<option value="">—</option>'].concat(STATUS_PERITO.map(s => '<option value="'+s+'"'+((p["Status_Perito"]||"").trim()===s?' selected':'')+'>'+s+'</option>')).join("");
+
+  let html =
+      '<div class="modal-section">'
+    + '<div class="modal-section-title">Situação do processo</div>'
+    + '<div class="form-grid">'
+      + '<div class="form-field"><label>Situação</label><select id="ed-situacao">'+sitOpts+'</select></div>'
+      + '<div class="form-field"><label>Fase atual</label><input type="text" id="ed-fase" value="'+esc(p["Fase_Atual"])+'"></div>'
+    + '</div>'
+    + '<div class="form-grid">'
+      + '<div class="form-field"><label>Status do perito</label><select id="ed-perito">'+perOpts+'</select></div>'
+      + '<div class="form-field"><label>Data última ação do perito</label><input type="date" id="ed-dataperito" value="'+paraInputDate(p["Data_Ultima_Acao_Perito"])+'"></div>'
+    + '</div>'
+    + '<div class="form-grid full"><div class="form-field"><label>Pendência ativa</label>'
+      + '<input type="text" id="ed-pendencia" value="'+esc(p["Pendencia_Ativa"])+'" placeholder="Ex: aguardando perito enviar laudo"></div></div>'
+    + '<div class="form-acoes"><button class="btn-confirmar" id="btnSalvarProc" onclick=\'salvarProcesso('+JSON.stringify(num)+')\'>Salvar situação</button></div>'
+    + '</div>';
+
+  // timeline
+  html += '<div class="modal-section"><div class="modal-section-title"><span>Linha do tempo</span>'
+       + '<label class="tl-toggle"><input type="checkbox" id="chkPerito" onchange="toggleSoPerito()"'+(soPerito?' checked':'')+'>só perito</label></div>'
+       + '<div id="tlLista"></div></div>';
+
+  // nova movimentação
+  const tipos = ["Intimação Eletrônica","Decisão","Despacho","Sentença","Juntada","Petição","Audiência","Conclusão","Outro"];
+  html += '<div class="modal-section"><div class="modal-section-title">Adicionar movimentação</div>'
+       + '<div class="form-grid tri">'
+         + '<div class="form-field"><label>Data</label><input type="date" id="mv-data"></div>'
+         + '<div class="form-field"><label>Tipo</label><select id="mv-tipo">'+tipos.map(t=>'<option>'+t+'</option>').join("")+'</select></div>'
+         + '<div class="form-field"><label>Envolve perito?</label><select id="mv-perito"><option value="NÃO">Não</option><option value="SIM">Sim</option></select></div>'
+       + '</div>'
+       + '<div class="form-grid full"><div class="form-field"><label>Descrição</label><textarea id="mv-desc" placeholder="Texto da movimentação..."></textarea></div></div>'
+       + '<div class="form-acoes"><button class="btn-confirmar" id="btnMov" onclick=\'salvarMovimentacao('+JSON.stringify(num)+')\'>Adicionar</button></div>'
+       + '</div>';
+
+  document.getElementById("modalCorpo").innerHTML = html;
+  renderTimeline(num);
+  abrirModal();
+}
+
+function renderTimeline(num){
+  const lista = movsDoProcesso(num).filter(m => !soPerito || (m["Envolve_Perito"]||"").toUpperCase().startsWith("S"));
+  const el = document.getElementById("tlLista");
+  if (!lista.length) { el.innerHTML = '<div style="font-size:12.5px;color:#64748B;font-style:italic;padding:6px 0">Nenhuma movimentação registrada'+(soPerito?' envolvendo o perito':'')+'.</div>'; return; }
+  el.innerHTML = lista.map(m => {
+    const perito = (m["Envolve_Perito"]||"").toUpperCase().startsWith("S");
+    return '<div class="tl-item'+(perito?' perito':'')+'">'
+      + '<div class="tl-top"><span class="tl-data">'+(m["Data_Movimento"]||"")+'</span>'
+      + '<span class="tl-tipo">'+(m["Tipo_Movimento"]||"")+'</span>'
+      + (perito?'<span class="tag-perito">perito</span>':'')+'</div>'
+      + '<div class="tl-desc">'+(m["Descricao"]||"")+'</div></div>';
+  }).join("");
+}
+function toggleSoPerito(){ soPerito = document.getElementById("chkPerito").checked; if (_procAtual) renderTimeline(_procAtual); }
+
+async function salvarProcesso(num){
+  const btn = document.getElementById("btnSalvarProc");
+  btn.disabled = true; btn.textContent = "Salvando...";
+  const dataPer = document.getElementById("ed-dataperito").value;
+  const r = await chamar({
+    acao: 'editar_processo',
+    numero: num,
+    situacao: document.getElementById("ed-situacao").value,
+    fase: document.getElementById("ed-fase").value.trim(),
+    statusPerito: document.getElementById("ed-perito").value,
+    dataAcaoPerito: dataPer ? dataPer.split("-").reverse().join("/") : "",
+    pendencia: document.getElementById("ed-pendencia").value.trim()
+  });
+  if (r.ok) { toast('Situação salva'); fecharModal(); await carregarDados(); }
+  else { btn.disabled = false; btn.textContent = "Salvar situação"; toast('Erro: ' + (r.erro||'falha'), true); }
+}
+
+async function salvarMovimentacao(num){
+  const dataRaw = document.getElementById("mv-data").value;
+  const tipo = document.getElementById("mv-tipo").value;
+  const desc = document.getElementById("mv-desc").value.trim();
+  const envolve = document.getElementById("mv-perito").value;
+  if (!dataRaw) { alert("Preencha a data da movimentação."); return; }
+  if (!desc) { alert("Preencha a descrição."); return; }
+  const data = dataRaw.split("-").reverse().join("/");
+  const btn = document.getElementById("btnMov");
+  btn.disabled = true; btn.textContent = "Adicionando...";
+  const r = await chamar({
+    acao: 'nova_movimentacao',
+    numero: num, data: data, tipo: tipo, descricao: desc, envolvePerito: envolve
+  });
+  if (r.ok) { toast(r.duplicado ? 'Movimentação já existia' : 'Movimentação adicionada'); fecharModal(); await carregarDados(); }
+  else { btn.disabled = false; btn.textContent = "Adicionar"; toast('Erro: ' + (r.erro||'falha'), true); }
+}
+
+// === NOVO PROCESSO ===
+function abrirNovoProcesso(){
+  document.getElementById("modalTitulo").textContent = "Novo processo";
+  document.getElementById("modalSub").textContent = "";
+  const perOpts = ['<option value="">—</option>'].concat(STATUS_PERITO.map(s=>'<option value="'+s+'">'+s+'</option>')).join("");
+  const sitOpts = SITUACOES.map(s=>'<option value="'+s+'"'+(s==="Em andamento"?' selected':'')+'>'+s+'</option>').join("");
+  document.getElementById("modalCorpo").innerHTML =
+      '<div class="modal-section">'
+    + '<div class="form-grid">'
+      + '<div class="form-field"><label>Nº único (CNJ)</label><input type="text" id="np-unico" placeholder="0000000-00.0000.8.25.0000"></div>'
+      + '<div class="form-field"><label>Nº interno</label><input type="text" id="np-interno" placeholder="ex: 202552000005"></div>'
+    + '</div>'
+    + '<div class="form-grid">'
+      + '<div class="form-field"><label>Vara</label><input type="text" id="np-vara" placeholder="1ª Vara Cível de..."></div>'
+      + '<div class="form-field"><label>Situação</label><select id="np-situacao">'+sitOpts+'</select></div>'
+    + '</div>'
+    + '<div class="form-grid">'
+      + '<div class="form-field"><label>Requerente</label><input type="text" id="np-req" placeholder="Nome do autor"></div>'
+      + '<div class="form-field"><label>Requerido</label><input type="text" id="np-requerido" value="'+REQUERIDO_PADRAO+'"></div>'
+    + '</div>'
+    + '<div class="form-grid">'
+      + '<div class="form-field"><label>Fase atual</label><input type="text" id="np-fase" placeholder="ex: Postulação"></div>'
+      + '<div class="form-field"><label>Status do perito</label><select id="np-perito">'+perOpts+'</select></div>'
+    + '</div>'
+    + '<div class="form-grid full"><div class="form-field"><label>Pendência ativa</label><input type="text" id="np-pendencia" placeholder="opcional"></div></div>'
+    + '</div>'
+    + '<div class="form-acoes"><button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>'
+    + '<button class="btn-confirmar" id="btnNovoProc" onclick="salvarNovoProcesso()">Salvar processo</button></div>';
+  abrirModal();
+}
+
+async function salvarNovoProcesso(){
+  const interno = document.getElementById("np-interno").value.trim();
+  const unico = document.getElementById("np-unico").value.trim();
+  const numero = interno || unico;
+  const req = document.getElementById("np-req").value.trim();
+  if (!numero) { alert("Preencha o número do processo (interno ou único)."); return; }
+  if (!req) { alert("Preencha o requerente."); return; }
+  if (PROCESSOS.some(p => String(p["Numero_Processo"]) === numero || (unico && p["Numero_Unico"] === unico))) {
+    alert("Já existe um processo com esse número."); return;
+  }
+  const btn = document.getElementById("btnNovoProc");
+  btn.disabled = true; btn.textContent = "Salvando...";
+  const hoje = new Date().toLocaleDateString("pt-BR");
+  const r = await chamar({
+    acao: 'novo_processo',
+    numero: numero,
+    numeroUnico: unico,
+    vara: document.getElementById("np-vara").value.trim(),
+    requerente: req,
+    requerido: document.getElementById("np-requerido").value.trim(),
+    situacao: document.getElementById("np-situacao").value,
+    fase: document.getElementById("np-fase").value.trim(),
+    statusPerito: document.getElementById("np-perito").value,
+    pendencia: document.getElementById("np-pendencia").value.trim(),
+    dataAtualizacao: hoje
+  });
+  if (r.ok) { toast('Processo cadastrado'); fecharModal(); await carregarDados(); }
+  else { btn.disabled = false; btn.textContent = "Salvar processo"; toast('Erro: ' + (r.erro||'falha'), true); }
+}
+
+// === UTIL ===
+function esc(s){ return String(s||'').replace(/"/g,'&quot;'); }
+function paraInputDate(s){ if (!s) return ''; const p = String(s).split('/'); if (p.length!==3) return ''; return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0'); }
+function abrirModal(){ document.getElementById("modalBg").classList.remove("off"); }
+function fecharModal(){ document.getElementById("modalBg").classList.add("off"); }
+document.getElementById("modalBg").addEventListener("click", function(e){ if (e.target === this) fecharModal(); });
+
+let toastTimer = null;
+function toast(msg, err){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast show" + (err ? " err" : "");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.className = "toast" + (err ? " err" : ""); }, 2500);
+}
+
+document.getElementById("dt").textContent = new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"})
+  + " · " + new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+</script>
+</body>
+</html>
