@@ -21,10 +21,7 @@ body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:#1A2740;min-heigh
 .pnl-header-right .usr{font-size:10.5px;color:#AACCE8;margin-top:4px;display:flex;align-items:center;gap:8px}
 .btn-sair{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:10px;padding:2px 9px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif}
 .btn-sair:hover{background:rgba(255,255,255,.18)}
-.abar{background:#FFFBEB;border-bottom:2px solid #FCD34D;padding:11px 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;font-size:13px;font-weight:600;color:#92400E}
-.abar.off{display:none}
-.abar b{color:#B45309}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 28px;background:#EEF4FB;border-bottom:1px solid #E2EAF4;max-width:1500px;margin:0 auto;width:100%}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 28px;background:#EEF4FB;border-bottom:1px solid #E2EAF4;max-width:1500px;margin:0 auto;width:100%}
 .card{background:#fff;border:0.5px solid #E2EAF4;border-radius:12px;padding:12px 16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px}
 .card:hover{border-color:#2E5FA3;transform:translateY(-1px);box-shadow:0 4px 12px rgba(31,56,100,.08)}
 .card.sel{border:1.5px solid #2E5FA3;box-shadow:0 4px 12px rgba(31,56,100,.1)}
@@ -33,11 +30,11 @@ body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:#1A2740;min-heigh
 .card .num{font-size:24px;font-weight:700;line-height:1}
 .card .leg{font-size:11px;color:#64748B;font-weight:500;margin-top:2px}
 .card .ico{font-size:20px}
-.c-tot{color:#1F3864}.c-alv{color:#B45309}.c-laudo{color:#1E40AF}.c-pend{color:#DC2626}
+.c-tot{color:#1F3864}.c-alv{color:#B45309}.c-per{color:#6B21A8}
 .filtros{max-width:1500px;margin:0 auto;padding:12px 28px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid #E2EAF4;background:#fff}
 .filtros select,.filtros input{font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid #E2EAF4;background:#fff;font-family:'DM Sans',sans-serif;color:#1A2740}
 .filtros select{cursor:pointer}
-.filtros input.busca{min-width:210px}
+.filtros input.busca{min-width:220px}
 .sep{flex:1}
 .cont-label{font-size:12px;color:#64748B}
 .btn-atualizar{font-size:12px;padding:6px 14px;border-radius:20px;border:1px solid #E2EAF4;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;color:#1A2740;transition:all .15s}
@@ -48,34 +45,21 @@ thead tr{background:#1F3864}
 thead th{padding:11px 14px;text-align:left;font-size:10px;font-weight:600;color:#AACCE8;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;overflow:hidden}
 tbody tr{border-bottom:1px solid #E2EAF4;transition:background .1s;cursor:pointer}
 tbody tr:hover{background:#EEF4FB}
-tbody tr.row-receber{background:#FFFDF5}
-tbody tr.row-receber:hover{background:#FEF9E7}
+tbody tr.row-alvara{background:#FFFDF5}
+tbody tr.row-alvara:hover{background:#FEF9E7}
 td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
-.td-proc{width:132px;font-family:'DM Mono',monospace;font-size:12.5px;color:#1F3864;font-weight:600}
+.td-proc{width:150px;font-family:'DM Mono',monospace;font-size:12.5px;color:#1F3864;font-weight:600}
 .td-proc .cnj{font-size:9.5px;color:#94A3B8;font-weight:400;margin-top:2px;letter-spacing:-.2px}
-.td-vara{width:140px;font-size:12px}
-.td-req{font-weight:500;line-height:1.35;font-size:12.5px}
-.td-sit{width:112px}
-.td-and{width:214px}
-.td-alv{width:150px}
-.td-pend{width:180px;font-size:12px;color:#92400E}
+.td-vara{width:160px;font-size:12px}
+.td-req{width:190px;font-weight:500;line-height:1.35;font-size:12.5px}
+.td-mov{line-height:1.35}
+.td-mov .data{font-family:'DM Mono',monospace;font-size:10.5px;color:#64748B}
+.td-mov .desc{font-size:12.5px;color:#1A2740;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:1px}
+.td-qtd{width:80px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:#64748B}
 .td-acoes{width:56px;text-align:center;white-space:nowrap}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}
-.badge::before{content:"●";font-size:6px}
-.badge-andamento{background:#EFF6FF;color:#1E40AF}
-.badge-suspenso{background:#FFF7ED;color:#B45309}
-.badge-julgado{background:#F0FDF4;color:#15803D}
-.badge-arquivado{background:#F1F5F9;color:#475569}
-.chkrow{display:flex;gap:3px;flex-wrap:wrap}
-.chip{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;letter-spacing:.3px;text-transform:uppercase;white-space:nowrap;cursor:default}
-.chip.mdone{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0}
-.chip.mtodo{background:#F8FAFC;color:#94A3B8;border:1px solid #E2E8F0}
-.chip.malv{background:#FEF3C7;color:#B45309;border:1px solid #FCD34D}
-.alv{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;white-space:nowrap}
-.alv-receber{background:#FEF3C7;color:#B45309;border:1px solid #F59E0B}
-.alv-recebido{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0}
-.alv-none{color:#94A3B8;font-size:11px}
-.alv-data{font-size:9.5px;color:#B45309;font-weight:500;margin-top:2px;font-family:'DM Mono',monospace}
+.tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;margin-right:4px}
+.tag-perito{background:#F3E8FF;color:#6B21A8;border:1px solid #E9D5FF}
+.tag-alvara{background:#FEF3C7;color:#B45309;border:1px solid #FCD34D}
 .btn-icon{background:none;border:1px solid #E2EAF4;border-radius:8px;padding:4px 7px;cursor:pointer;font-size:12px;color:#64748B;transition:all .15s;display:inline-flex;align-items:center;gap:3px;font-family:'DM Sans',sans-serif}
 .btn-icon:hover{border-color:#2E5FA3;color:#2E5FA3}
 .vazio{text-align:center;padding:60px;color:#64748B;font-size:13px;display:none}
@@ -88,40 +72,18 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
 .modal-title{font-size:16px;font-weight:600;line-height:1.3}
 .modal-sub{font-size:11.5px;color:#64748B;font-family:'DM Mono',monospace;margin-bottom:16px}
 .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:#64748B;line-height:1;padding:0 4px}
-.modal-section{margin-bottom:18px}
-.modal-section-title{font-size:11px;font-weight:600;color:#64748B;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
-.alv-banner{border-radius:12px;padding:14px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;font-weight:600;font-size:14px}
-.alv-banner .big{font-size:22px}
-.alv-banner.receber{background:#FEF3C7;border:1.5px solid #F59E0B;color:#92400E}
-.alv-banner.recebido{background:#F0FDF4;border:1.5px solid #BBF7D0;color:#15803D}
-.alv-banner .det{font-size:11.5px;font-weight:500;margin-top:2px;opacity:.9}
-.steps{display:flex;flex-wrap:wrap;gap:8px}
-.step{flex:1;min-width:110px;border:1px solid #E2EAF4;border-radius:10px;padding:9px 11px;background:#F8FAFC}
-.step.done{background:#F0FDF4;border-color:#BBF7D0}
-.step.done.alv{background:#FEF9E7;border-color:#FCD34D}
-.step .st-top{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#334155}
-.step.done .st-top{color:#15803D}
-.step.done.alv .st-top{color:#B45309}
-.step .st-mark{font-size:13px}
-.step .st-det{font-size:10.5px;color:#64748B;margin-top:3px;font-family:'DM Mono',monospace}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.info-field{background:#F8FAFC;border-radius:8px;padding:9px 12px}
-.info-field .k{font-size:10px;font-weight:600;color:#64748B;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.info-field .v{font-size:13px;color:#1A2740}
-.pend-box{background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:10px 13px;font-size:13px;color:#92400E}
-.pend-box.vazio2{background:#F8FAFC;border-color:#E2EAF4;color:#64748B;font-style:italic}
+.tl-bar{display:flex;gap:6px;margin-bottom:12px}
+.tl-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid #E2EAF4;background:#fff;color:#64748B;cursor:pointer;font-family:'DM Sans',sans-serif}
+.tl-btn.on{background:#1F3864;color:#fff;border-color:#1F3864}
+.tl-btn.on.per{background:#6B21A8;border-color:#6B21A8}
+.tl-btn.on.alv{background:#B45309;border-color:#B45309}
 .tl-item{padding:9px 12px;background:#F8FAFC;border-radius:8px;margin-bottom:6px;border-left:3px solid #CBD5E1}
 .tl-item.perito{border-left-color:#8B5CF6;background:#FAF5FF}
 .tl-item.alvara{border-left-color:#F59E0B;background:#FFFBEB}
 .tl-top{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap}
 .tl-data{font-size:10.5px;color:#64748B;font-family:'DM Mono',monospace}
 .tl-tipo{font-size:10.5px;font-weight:600;color:#2E5FA3}
-.tl-desc{font-size:12.5px;line-height:1.4}
-.tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
-.tag-perito{background:#F3E8FF;color:#6B21A8;border:1px solid #E9D5FF}
-.tag-alvara{background:#FEF3C7;color:#B45309;border:1px solid #FCD34D}
-.tl-toggle{font-size:10.5px;font-weight:500;color:#6B21A8;cursor:pointer;user-select:none;text-transform:none;letter-spacing:0}
-.tl-toggle input{vertical-align:middle;margin-right:4px}
+.tl-desc{font-size:12.5px;line-height:1.4;white-space:pre-wrap}
 .toast{position:fixed;bottom:24px;right:24px;background:#1F3864;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:600;opacity:0;transform:translateY(10px);transition:all .25s}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast.err{background:#B91C1C}
@@ -135,12 +97,11 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
 .login-loading{font-size:12px;color:#64748B;margin-top:12px}
 @media(max-width:768px){
   .pnl-header-inner{flex-direction:column}
-  .cards{padding:12px 16px;grid-template-columns:repeat(2,1fr)}
+  .cards{padding:12px 16px}
   .filtros{padding:10px 16px}
   .tabela-wrap{padding:12px 16px 32px}
   td{padding:9px 10px;font-size:12px}
-  .td-vara,.td-pend{display:none}
-  .info-grid{grid-template-columns:1fr}
+  .td-vara,.td-qtd{display:none}
 }
 </style>
 </head>
@@ -173,40 +134,23 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
     </div>
   </div>
 </div>
-<div class="abar off" id="abar">💰 <span id="atxt"></span></div>
 <div style="background:#EEF4FB;border-bottom:1px solid #E2EAF4">
   <div class="cards">
     <div class="card sel" id="card-todos" onclick="filtrar('foco','todos')">
-      <div><div class="num c-tot" id="n-tot">—</div><div class="leg">Processos ativos</div></div>
+      <div><div class="num c-tot" id="n-tot">—</div><div class="leg">Processos</div></div>
     </div>
     <div class="card card-alvara" id="card-alvara" onclick="filtrar('foco','alvara')">
       <div class="ico">💰</div>
-      <div><div class="num c-alv" id="n-alv">—</div><div class="leg">Alvará a receber</div></div>
+      <div><div class="num c-alv" id="n-alv">—</div><div class="leg">Com movimentação de alvará</div></div>
     </div>
-    <div class="card" id="card-laudo" onclick="filtrar('foco','laudo')">
-      <div><div class="num c-laudo" id="n-laudo">—</div><div class="leg">Aguardando meu laudo</div></div>
-    </div>
-    <div class="card" id="card-pend" onclick="filtrar('foco','pend')">
-      <div><div class="num c-pend" id="n-pend">—</div><div class="leg">Com pendência do perito</div></div>
+    <div class="card" id="card-perito" onclick="filtrar('foco','perito')">
+      <div><div class="num c-per" id="n-per">—</div><div class="leg">Com movimentação do perito</div></div>
     </div>
   </div>
 </div>
 <div class="filtros">
   <input class="busca" type="text" id="fBusca" placeholder="🔎 Buscar processo, vara, requerente..." oninput="filtrar('busca',this.value)">
-  <select id="fSituacao" onchange="filtrar('situacao',this.value)">
-    <option value="ativos">Situação: ativos</option>
-    <option value="todos">Todas as situações</option>
-  </select>
   <select id="fVara" onchange="filtrar('vara',this.value)"><option value="todas">Todas as varas</option></select>
-  <select id="fEtapa" onchange="filtrar('etapa',this.value)">
-    <option value="todas">Toda etapa do perito</option>
-    <option value="Não nomeado">Não nomeado</option>
-    <option value="Aguardando laudo">Aguardando laudo</option>
-    <option value="Laudo entregue">Laudo entregue</option>
-    <option value="Honorários arbitrados">Honorários arbitrados</option>
-    <option value="Alvará a receber">Alvará a receber</option>
-    <option value="Recebido">Recebido</option>
-  </select>
   <div class="sep"></div>
   <span class="cont-label" id="contLabel"></span>
   <button class="btn-atualizar" onclick="carregarDados()">↻ Atualizar</button>
@@ -218,17 +162,15 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
       <th class="td-proc">Nº do Processo</th>
       <th class="td-vara">Vara</th>
       <th class="td-req">Requerente</th>
-      <th class="td-sit">Situação</th>
-      <th class="td-and">Etapas cumpridas</th>
-      <th class="td-alv">Alvará</th>
-      <th class="td-pend">Pendência do perito</th>
+      <th class="td-mov">Última movimentação</th>
+      <th class="td-qtd">Movs.</th>
       <th class="td-acoes"></th>
     </tr></thead>
     <tbody id="tbody"></tbody>
   </table>
   <div class="vazio" id="vazio">Nenhum processo encontrado.</div>
 </div>
-<div class="rodape">Monitoramento de processos periciais — dados atualizados via consulta ao TJSE</div>
+<div class="rodape">Monitoramento de processos periciais — espelho das movimentações capturadas no TJSE</div>
 </div>
 
 <div class="modal-bg off" id="modalBg">
@@ -238,7 +180,12 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
       <button class="modal-close" onclick="fecharModal()">×</button>
     </div>
     <div class="modal-sub" id="modalSub"></div>
-    <div id="modalCorpo"></div>
+    <div class="tl-bar">
+      <button class="tl-btn on" id="tlb-todos" onclick="setFiltroTL('todos')">Todos</button>
+      <button class="tl-btn" id="tlb-perito" onclick="setFiltroTL('perito')">Só perito</button>
+      <button class="tl-btn" id="tlb-alvara" onclick="setFiltroTL('alvara')">Só alvará</button>
+    </div>
+    <div id="tlLista"></div>
   </div>
 </div>
 
@@ -252,7 +199,7 @@ const REQUERIDO_PADRAO = "Banco do Brasil";
 
 let idToken = null, userEmail = null;
 let PROCESSOS = [], MOVS = [];
-let F = {foco:"todos", situacao:"ativos", vara:"todas", etapa:"todas", busca:""};
+let F = {foco:"todos", vara:"todas", busca:""};
 
 // === LOGIN ===
 function aguardarGSI(cb){
@@ -304,72 +251,23 @@ async function chamar(payload){
   } catch(e){ return {ok:false, erro: String(e)}; }
 }
 
+// === DADOS ===
 function aplicarDados(r){
   const rawProc = r.processos || [];
   MOVS = r.movimentacoes || [];
-  // Identidade (Vara, Requerente, CNJ...) vem da aba Processos; o STATUS é derivado das movimentações.
   const identPorNum = {};
   rawProc.forEach(p => { const n = g(p,"Numero_Processo"); if (n) identPorNum[n] = p; });
   const nums = new Set();
   rawProc.forEach(p => { const n = g(p,"Numero_Processo"); if (n) nums.add(n); });
   MOVS.forEach(m => { const n = g(m,"Numero_Processo"); if (n) nums.add(n); });
-  PROCESSOS = [...nums].map(n => {
-    const ident = identPorNum[n] || {Numero_Processo:n};
-    const ms = MOVS.filter(m => String(g(m,"Numero_Processo")) === String(n));
-    if (!ms.length) return ident;                 // sem movimentos: mantém o que houver na aba
-    return Object.assign({}, ident, derivarProcesso(n)); // status derivado sobrescreve
+  // ordena por data da última movimentação (mais recente primeiro)
+  PROCESSOS = [...nums].map(n => identPorNum[n] || {Numero_Processo:n});
+  PROCESSOS.sort((a,b) => {
+    const ua = ultimaMov(g(a,"Numero_Processo")), ub = ultimaMov(g(b,"Numero_Processo"));
+    return (ua ? parseData(g(ua,"Data_Movimento"))||0 : 0) < (ub ? parseData(g(ub,"Data_Movimento"))||0 : 0) ? 1 : -1;
   });
   popularVaras();
   render();
-}
-
-// === DERIVAÇÃO: traduz as movimentações no status do processo ===
-function textoMov(m){ return g(m,"Tipo_Movimento") + " " + g(m,"Descricao"); }
-
-function derivarProcesso(num){
-  const ms = MOVS.filter(m => String(g(m,"Numero_Processo")) === String(num))
-    .sort((a,b) => (parseData(g(b,"Data_Movimento"))||0) - (parseData(g(a,"Data_Movimento"))||0)); // mais recente primeiro
-  const d = {Numero_Processo:num};
-  if (ms.length){ d.Data_Ultima_Mov = g(ms[0],"Data_Movimento"); d.Descricao_Ultima_Mov = g(ms[0],"Descricao"); }
-  const tem = re => ms.some(m => re.test(textoMov(m)));
-  const dataDe = re => { for (const m of ms) if (re.test(textoMov(m))) return g(m,"Data_Movimento"); return ""; };
-
-  // Situação (varre do mais recente pro mais antigo; primeiro marcador vence)
-  d.Situacao = "Em andamento";
-  for (const m of ms){ const t = textoMov(m);
-    if (/arquiv|baixa\s+defin/i.test(t)) { d.Situacao = "Arquivado"; break; }
-    if (/suspens/i.test(t))              { d.Situacao = "Suspenso";  break; }
-    if (/senten[çc]a/i.test(t))          { d.Situacao = "Julgado";   break; }
-  }
-
-  // Etapas do perito (permite palavras entre "nomea..." e "perito")
-  d.Nomeado = tem(/nomea\w*[\s\S]{0,25}perit|perit\w*[\s\S]{0,25}nomead/i) ? "SIM" : "NÃO";
-  const reLaudo = /juntad\w*\s+d?[eo]?\s*laudo|laudo\s+peric\w*\s+juntad|apresenta[çc][ãa]o\s+d[eo]\s+laudo|protocol\w*\s+d?[eo]?\s*laudo|juntad\w*\s+do\s+laudo/i;
-  d.Laudo_Entregue = tem(reLaudo) ? "SIM" : "NÃO";
-  d.Data_Laudo = d.Laudo_Entregue === "SIM" ? dataDe(reLaudo) : "";
-  d.Honorarios_Arbitrados = tem(/arbitr\w*[\s\S]{0,25}honor|honor\w*[\s\S]{0,25}arbitr|fix\w+[\s\S]{0,25}honor/i) ? "SIM" : "NÃO";
-
-  // Alvará (o mais importante)
-  const reReceb = /levantament|alvar\w*[\s\S]{0,25}levantad|levantad\w*[\s\S]{0,25}alvar|sacad\w*[\s\S]{0,25}alvar|alvar\w*[\s\S]{0,25}sacad|honor\w*[\s\S]{0,25}pag|pagament\w*[\s\S]{0,25}honor|alvar\w*[\s\S]{0,25}recebid|comprovante\s+de\s+levantament/i;
-  const reExped = /expedi\w*[\s\S]{0,25}alvar|alvar\w*[\s\S]{0,25}expedid|emiss[ãa]o\s+de\s+alvar|expedi[çc][ãa]o\s+de\s+alvar|alvar\w*[\s\S]{0,25}eletr[ôo]nic|alvar\w*[\s\S]{0,25}dispon|dispon\w*[\s\S]{0,25}alvar|liber\w*[\s\S]{0,25}alvar/i;
-  const recebido = tem(reReceb), expedido = tem(reExped);
-  d.Alvara_Status = recebido ? "Recebido" : (expedido ? "Expedido" : "");
-  d.Data_Alvara = d.Alvara_Status ? dataDe(/alvar|levantament/i) : "";
-  // se há alvará, os honorários já foram necessariamente arbitrados
-  if (d.Alvara_Status) d.Honorarios_Arbitrados = "SIM";
-
-  // Valor dos honorários (primeiro R$ num movimento que fale de honorários/alvará)
-  d.Valor_Honorarios = "";
-  for (const m of ms){ const t = textoMov(m); if (/honor|alvar/i.test(t)){ const v = t.match(/R\$\s?[\d\.]+,\d{2}/); if (v){ d.Valor_Honorarios = v[0]; break; } } }
-
-  // Pendência do perito (derivada do estágio; Recebido = concluído, sem pendência)
-  if (d.Alvara_Status === "Recebido")                                      d.Pendencia_Perito = "";
-  else if (d.Alvara_Status === "Expedido")                                 d.Pendencia_Perito = "aguardando levantamento do alvará";
-  else if (d.Laudo_Entregue === "SIM" && d.Honorarios_Arbitrados === "NÃO") d.Pendencia_Perito = "aguardando arbitramento dos honorários";
-  else if (d.Nomeado === "SIM" && d.Laudo_Entregue === "NÃO")              d.Pendencia_Perito = "aguardando eu enviar o laudo";
-  else                                                                      d.Pendencia_Perito = "";
-
-  return d;
 }
 async function carregarDados(){
   if (!idToken) return;
@@ -383,57 +281,17 @@ async function carregarDados(){
 }
 
 // === HELPERS ===
-function g(p,k){ return (p[k]==null?'':String(p[k])).trim(); }
-function sim(v){ return /^(s|sim|true|1)/i.test(String(v||'').trim()); }
+function g(o,k){ return (o[k]==null?'':String(o[k])).trim(); }
 function parseData(s){ if (!s) return null; const p = String(s).split("/"); if (p.length!==3) return null; return new Date(+p[2], +p[1]-1, +p[0]); }
-function diasDesde(s){ const d = parseData(s); if (!d) return null; const h = new Date(); h.setHours(0,0,0,0); return Math.floor((h - d)/86400000); }
-function ativo(p){ return g(p,"Situacao") !== "Arquivado"; }
-function temPendencia(p){ return !!g(p,"Pendencia_Perito"); }
-
-// estado do alvará: 'receber' | 'recebido' | 'nenhum'
-function alvaraState(p){
-  const s = g(p,"Alvara_Status").toLowerCase();
-  if (!s) return "nenhum";
-  if (/receb|levant|sac|credit|pag/.test(s)) return "recebido";
-  if (/exped|emit|dispon|libera|aguard/.test(s)) return "receber";
-  return "nenhum";
-}
-function aguardandoLaudo(p){ return sim(g(p,"Nomeado")) && !sim(g(p,"Laudo_Entregue")); }
-
-function etapa(p){
-  const a = alvaraState(p);
-  if (a === "recebido") return "Recebido";
-  if (a === "receber") return "Alvará a receber";
-  if (sim(g(p,"Honorarios_Arbitrados"))) return "Honorários arbitrados";
-  if (sim(g(p,"Laudo_Entregue"))) return "Laudo entregue";
-  if (sim(g(p,"Nomeado"))) return "Aguardando laudo";
-  return "Não nomeado";
-}
-
-function milestones(p){
-  const a = alvaraState(p);
-  return [
-    {ab:"Nom",   full:"Nomeado",               done: sim(g(p,"Nomeado")),               det: ""},
-    {ab:"Laudo", full:"Laudo entregue",        done: sim(g(p,"Laudo_Entregue")),        det: g(p,"Data_Laudo")},
-    {ab:"Honor.",full:"Honorários arbitrados", done: sim(g(p,"Honorarios_Arbitrados")), det: g(p,"Valor_Honorarios")},
-    {ab:"Alvará",full:"Alvará expedido",       done: a !== "nenhum", alv:true,           det: g(p,"Data_Alvara")},
-    {ab:"Receb.",full:"Recebido",              done: a === "recebido",                   det: ""}
-  ];
-}
-
 function movsDoProcesso(num){
   return MOVS.filter(m => String(g(m,"Numero_Processo")) === String(num))
     .sort((a,b) => (parseData(g(b,"Data_Movimento"))||0) - (parseData(g(a,"Data_Movimento"))||0));
 }
-function movPerito(m){ return sim(g(m,"Envolve_Perito")); }
-function movAlvara(m){ return /alvar/i.test(g(m,"Descricao") + " " + g(m,"Tipo_Movimento")); }
-
-function classeSituacao(s){
-  if (s === "Em andamento") return "badge-andamento";
-  if (s === "Suspenso") return "badge-suspenso";
-  if (s === "Julgado") return "badge-julgado";
-  return "badge-arquivado";
-}
+function ultimaMov(num){ const l = movsDoProcesso(num); return l.length ? l[0] : null; }
+function movPerito(m){ return /^(s|sim|true|1)/i.test(g(m,"Envolve_Perito")); }
+function movAlvara(m){ return /alvar/i.test(g(m,"Tipo_Movimento") + " " + g(m,"Descricao")); }
+function temPerito(num){ return movsDoProcesso(num).some(movPerito); }
+function temAlvara(num){ return movsDoProcesso(num).some(movAlvara); }
 
 function popularVaras(){
   const sel = document.getElementById("fVara");
@@ -449,7 +307,7 @@ function filtrar(campo, val){
   F[campo] = val;
   if (campo === "foco") {
     document.querySelectorAll(".card").forEach(c => c.classList.remove("sel"));
-    document.getElementById({todos:"card-todos", alvara:"card-alvara", laudo:"card-laudo", pend:"card-pend"}[val]).classList.add("sel");
+    document.getElementById({todos:"card-todos", alvara:"card-alvara", perito:"card-perito"}[val]).classList.add("sel");
   }
   render();
 }
@@ -457,15 +315,13 @@ function filtrar(campo, val){
 function processosFiltrados(){
   const q = F.busca.trim().toLowerCase();
   return PROCESSOS.filter(p => {
-    if (F.situacao === "ativos" && !ativo(p)) return false;
-    if (F.situacao !== "ativos" && F.situacao !== "todos" && g(p,"Situacao") !== F.situacao) return false;
+    const num = g(p,"Numero_Processo");
     if (F.vara !== "todas" && g(p,"Vara") !== F.vara) return false;
-    if (F.etapa !== "todas" && etapa(p) !== F.etapa) return false;
-    if (F.foco === "alvara" && alvaraState(p) !== "receber") return false;
-    if (F.foco === "laudo" && !aguardandoLaudo(p)) return false;
-    if (F.foco === "pend" && !temPendencia(p)) return false;
+    if (F.foco === "alvara" && !temAlvara(num)) return false;
+    if (F.foco === "perito" && !temPerito(num)) return false;
     if (q) {
-      const blob = [g(p,"Numero_Processo"),g(p,"Numero_Unico"),g(p,"Vara"),g(p,"Requerente"),g(p,"Fase_Atual"),g(p,"Pendencia_Perito")].join(" ").toLowerCase();
+      const um = ultimaMov(num);
+      const blob = [num, g(p,"Numero_Unico"), g(p,"Vara"), g(p,"Requerente"), um?g(um,"Descricao"):""].join(" ").toLowerCase();
       if (!blob.includes(q)) return false;
     }
     return true;
@@ -473,18 +329,9 @@ function processosFiltrados(){
 }
 
 function render(){
-  const ativos = PROCESSOS.filter(ativo);
-  const alvReceber = ativos.filter(p => alvaraState(p) === "receber");
-  document.getElementById("n-tot").textContent = ativos.length;
-  document.getElementById("n-alv").textContent = alvReceber.length;
-  document.getElementById("n-laudo").textContent = ativos.filter(aguardandoLaudo).length;
-  document.getElementById("n-pend").textContent = ativos.filter(temPendencia).length;
-
-  const abar = document.getElementById("abar");
-  if (alvReceber.length) {
-    abar.classList.remove("off");
-    document.getElementById("atxt").innerHTML = "<b>" + alvReceber.length + " processo(s) com alvará A RECEBER</b> — fique atento ao levantamento dos honorários.";
-  } else abar.classList.add("off");
+  document.getElementById("n-tot").textContent = PROCESSOS.length;
+  document.getElementById("n-alv").textContent = PROCESSOS.filter(p => temAlvara(g(p,"Numero_Processo"))).length;
+  document.getElementById("n-per").textContent = PROCESSOS.filter(p => temPerito(g(p,"Numero_Processo"))).length;
 
   const filtrados = processosFiltrados();
   document.getElementById("contLabel").textContent = filtrados.length === PROCESSOS.length
@@ -498,100 +345,67 @@ function render(){
 
   filtrados.forEach(p => {
     const num = g(p,"Numero_Processo");
-    const aState = alvaraState(p);
+    const movs = movsDoProcesso(num);
+    const um = movs.length ? movs[0] : null;
     const tr = document.createElement("tr");
-    if (aState === "receber") tr.className = "row-receber";
+    if (um && movAlvara(um)) tr.className = "row-alvara";
     tr.onclick = function(e){ if (e.target.closest('.btn-icon')) return; abrirProcesso(num); };
 
-    const sit = g(p,"Situacao") || "—";
     const cnj = g(p,"Numero_Unico");
-    const chips = milestones(p).map(m =>
-      '<span class="chip '+(m.done?(m.alv?'malv':'mdone'):'mtodo')+'" title="'+m.full+(m.det?' — '+m.det:'')+'">'+(m.done?'✓ ':'')+m.ab+'</span>'
-    ).join("");
-
-    let alvHtml;
-    if (aState === "receber") alvHtml = '<span class="alv alv-receber">⚠ A RECEBER</span>' + (g(p,"Data_Alvara")?'<div class="alv-data">'+g(p,"Data_Alvara")+'</div>':'');
-    else if (aState === "recebido") alvHtml = '<span class="alv alv-recebido">✓ Recebido</span>';
-    else alvHtml = '<span class="alv-none">—</span>';
+    let movHtml;
+    if (um) {
+      let tags = "";
+      if (movAlvara(um)) tags += '<span class="tag tag-alvara">alvará</span>';
+      if (movPerito(um)) tags += '<span class="tag tag-perito">perito</span>';
+      movHtml = '<div class="data">'+g(um,"Data_Movimento")+'</div><div class="desc">'+tags+esc(g(um,"Descricao"))+'</div>';
+    } else {
+      movHtml = '<span style="color:#94A3B8;font-size:12px">Sem movimentação registrada</span>';
+    }
 
     tr.innerHTML =
         '<td class="td-proc">'+(num||"—")+(cnj?'<div class="cnj">'+cnj+'</div>':'')+'</td>'
       + '<td class="td-vara">'+(g(p,"Vara")||"—")+'</td>'
       + '<td class="td-req">'+(g(p,"Requerente")||"—")+'</td>'
-      + '<td class="td-sit"><span class="badge '+classeSituacao(sit)+'">'+sit+'</span></td>'
-      + '<td class="td-and"><div class="chkrow">'+chips+'</div></td>'
-      + '<td class="td-alv">'+alvHtml+'</td>'
-      + '<td class="td-pend">'+(g(p,"Pendencia_Perito")||'<span style="color:#94A3B8">—</span>')+'</td>'
-      + '<td class="td-acoes"><button class="btn-icon" onclick=\'abrirProcesso('+JSON.stringify(num)+')\' title="Detalhes">🔍</button></td>';
+      + '<td class="td-mov">'+movHtml+'</td>'
+      + '<td class="td-qtd">'+movs.length+'</td>'
+      + '<td class="td-acoes"><button class="btn-icon" onclick=\'abrirProcesso('+JSON.stringify(num)+')\' title="Linha do tempo">🔍</button></td>';
     tbody.appendChild(tr);
   });
 }
 
-// === DETALHE (somente leitura) ===
-let soPerito = false;
+// === DETALHE: linha do tempo ===
 let _procAtual = null;
+let filtroTL = "todos";
 function abrirProcesso(num){
   const p = PROCESSOS.find(x => String(g(x,"Numero_Processo")) === String(num));
   if (!p) return;
   _procAtual = num;
-  document.getElementById("modalTitulo").textContent = g(p,"Requerente") || "Processo";
+  document.getElementById("modalTitulo").textContent = g(p,"Requerente") || ("Processo " + num);
   document.getElementById("modalSub").textContent =
-    (g(p,"Numero_Processo")||"") + (g(p,"Numero_Unico")?"  ·  "+g(p,"Numero_Unico"):"") + "  ·  " + (g(p,"Vara")||"") + "  ·  Requerido: " + (g(p,"Requerido")||REQUERIDO_PADRAO);
-
-  const aState = alvaraState(p);
-  let html = "";
-
-  // banner alvará
-  if (aState === "receber") {
-    html += '<div class="alv-banner receber"><span class="big">💰</span><div>ALVARÁ A RECEBER — atenção ao levantamento dos honorários.'
-         + '<div class="det">'+(g(p,"Alvara_Status")||"Alvará expedido")+(g(p,"Data_Alvara")?" · "+g(p,"Data_Alvara"):"")+(g(p,"Valor_Honorarios")?" · "+g(p,"Valor_Honorarios"):"")+'</div></div></div>';
-  } else if (aState === "recebido") {
-    html += '<div class="alv-banner recebido"><span class="big">✓</span><div>Honorários recebidos.'
-         + (g(p,"Data_Alvara")||g(p,"Valor_Honorarios")?'<div class="det">'+[g(p,"Alvara_Status"),g(p,"Data_Alvara"),g(p,"Valor_Honorarios")].filter(Boolean).join(" · ")+'</div>':'')+'</div></div>';
-  }
-
-  // etapas cumpridas
-  html += '<div class="modal-section"><div class="modal-section-title">Etapas cumpridas</div><div class="steps">';
-  html += milestones(p).map(m =>
-    '<div class="step'+(m.done?' done':'')+(m.done&&m.alv?' alv':'')+'">'
-    + '<div class="st-top"><span class="st-mark">'+(m.done?'✓':'○')+'</span>'+m.full+'</div>'
-    + (m.det?'<div class="st-det">'+m.det+'</div>':'')
-    + '</div>'
-  ).join("");
-  html += '</div></div>';
-
-  // situação do processo
-  html += '<div class="modal-section"><div class="modal-section-title">Situação do processo</div><div class="info-grid">'
-    + infoField("Situação", g(p,"Situacao")||"—")
-    + infoField("Fase atual", g(p,"Fase_Atual")||"—")
-    + infoField("Última movimentação", g(p,"Data_Ultima_Mov")||"—")
-    + infoField("Etapa do perito", etapa(p))
-    + '</div>'
-    + (g(p,"Descricao_Ultima_Mov")?'<div style="margin-top:8px;font-size:12.5px;color:#475569;line-height:1.4">'+g(p,"Descricao_Ultima_Mov")+'</div>':'')
-    + '</div>';
-
-  // pendência
-  const pend = g(p,"Pendencia_Perito");
-  html += '<div class="modal-section"><div class="modal-section-title">Pendência do perito</div>'
-    + (pend ? '<div class="pend-box">'+pend+'</div>' : '<div class="pend-box vazio2">Sem pendência do perito no momento.</div>')
-    + '</div>';
-
-  // timeline
-  html += '<div class="modal-section"><div class="modal-section-title"><span>Linha do tempo</span>'
-       + '<label class="tl-toggle"><input type="checkbox" id="chkPerito" onchange="toggleSoPerito()"'+(soPerito?' checked':'')+'>só perito</label></div>'
-       + '<div id="tlLista"></div></div>';
-
-  document.getElementById("modalCorpo").innerHTML = html;
+    (g(p,"Numero_Processo")||"") + (g(p,"Numero_Unico")?"  ·  "+g(p,"Numero_Unico"):"") + (g(p,"Vara")?"  ·  "+g(p,"Vara"):"") + "  ·  Requerido: " + (g(p,"Requerido")||REQUERIDO_PADRAO);
+  atualizarBotoesTL();
   renderTimeline(num);
   abrirModal();
 }
 
-function infoField(k,v){ return '<div class="info-field"><div class="k">'+k+'</div><div class="v">'+v+'</div></div>'; }
+function setFiltroTL(f){ filtroTL = f; atualizarBotoesTL(); if (_procAtual) renderTimeline(_procAtual); }
+function atualizarBotoesTL(){
+  ["todos","perito","alvara"].forEach(f => {
+    const b = document.getElementById("tlb-"+f);
+    b.className = "tl-btn" + (filtroTL===f ? " on" + (f==="perito"?" per":f==="alvara"?" alv":"") : "");
+  });
+}
 
 function renderTimeline(num){
-  const lista = movsDoProcesso(num).filter(m => !soPerito || movPerito(m));
+  let lista = movsDoProcesso(num);
+  if (filtroTL === "perito") lista = lista.filter(movPerito);
+  else if (filtroTL === "alvara") lista = lista.filter(movAlvara);
   const el = document.getElementById("tlLista");
-  if (!lista.length) { el.innerHTML = '<div style="font-size:12.5px;color:#64748B;font-style:italic;padding:6px 0">Nenhuma movimentação registrada'+(soPerito?' envolvendo o perito':'')+'.</div>'; return; }
+  if (!lista.length) {
+    const q = filtroTL==="perito" ? " envolvendo o perito" : (filtroTL==="alvara" ? " de alvará" : "");
+    el.innerHTML = '<div style="font-size:12.5px;color:#64748B;font-style:italic;padding:6px 0">Nenhuma movimentação'+q+'.</div>';
+    return;
+  }
   el.innerHTML = lista.map(m => {
     const perito = movPerito(m), alvara = movAlvara(m);
     const cls = alvara ? "alvara" : (perito ? "perito" : "");
@@ -600,13 +414,13 @@ function renderTimeline(num){
     if (perito) tags += '<span class="tag tag-perito">perito</span>';
     return '<div class="tl-item '+cls+'">'
       + '<div class="tl-top"><span class="tl-data">'+g(m,"Data_Movimento")+'</span>'
-      + '<span class="tl-tipo">'+g(m,"Tipo_Movimento")+'</span>'+tags+'</div>'
-      + '<div class="tl-desc">'+g(m,"Descricao")+'</div></div>';
+      + (g(m,"Tipo_Movimento")?'<span class="tl-tipo">'+esc(g(m,"Tipo_Movimento"))+'</span>':'')+tags+'</div>'
+      + '<div class="tl-desc">'+esc(g(m,"Descricao"))+'</div></div>';
   }).join("");
 }
-function toggleSoPerito(){ soPerito = document.getElementById("chkPerito").checked; if (_procAtual) renderTimeline(_procAtual); }
 
-// === MODAL / TOAST ===
+// === UTIL ===
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function abrirModal(){ document.getElementById("modalBg").classList.remove("off"); }
 function fecharModal(){ document.getElementById("modalBg").classList.add("off"); }
 document.getElementById("modalBg").addEventListener("click", function(e){ if (e.target === this) fecharModal(); });
