@@ -26,11 +26,15 @@ o Claude não tem como. Siga os passos abaixo na ordem. Ao final, o painel está
 2. Crie **duas abas** com estes nomes exatos (respeite maiúsculas/acentos):
    - `Processos`
    - `Movimentacoes` (sem acento no "ç" — é só a aba; o painel usa esse nome exato)
-3. Na aba **Processos**, cole na **linha 1** (cabeçalho), uma coluna por célula A1..R1:
+3. Na aba **Processos**, cole na **linha 1** (cabeçalho), uma coluna por célula A1..G1:
 
 ```
-Numero_Processo	Numero_Unico	Vara	Requerente	Requerido	Situacao	Fase_Atual	Data_Ultima_Mov	Descricao_Ultima_Mov	Nomeado	Laudo_Entregue	Data_Laudo	Honorarios_Arbitrados	Valor_Honorarios	Alvara_Status	Data_Alvara	Pendencia_Perito	Data_Ultima_Atualizacao_Painel
+Numero_Processo	Numero_Unico	Vara	Requerente	Requerido	Situacao	Data_Julgamento
 ```
+
+Só identidade + situação (capturadas do site, não inferidas). `Vara` = campo "Competência"
+do e-SAJ. `Situacao` = campo "Situação" (JULGADO, EM ANDAMENTO, ARQUIVADO…). `Data_Julgamento`
+só quando JULGADO. Todo o status do perito/alvará o painel mostra a partir das MOVIMENTAÇÕES.
 
 4. Na aba **Movimentacoes**, cole na **linha 1**, A1..F1:
 
@@ -45,21 +49,18 @@ Numero_Processo	Data_Movimento	Tipo_Movimento	Descricao	Envolve_Perito	ID_Unico
 cabeça com o Sheets convertendo datas, deixe as colunas de data como **texto simples**
 (Formatar → Número → Texto simples) nas duas abas.
 
-**Regras dos valores** (o painel espera exatamente estes):
-- `Situacao`: `Em andamento`, `Suspenso`, `Julgado`, `Arquivado`
-- `Nomeado`, `Laudo_Entregue`, `Honorarios_Arbitrados`: `SIM` ou `NÃO`
-- `Alvara_Status`: `Sem alvará`, `Expedido`, `Disponível` ou `Recebido`
-  (o painel destaca "A RECEBER" quando é Expedido/Disponível/Liberado, e "Recebido"
-  quando houve levantamento/pagamento)
-- `Pendencia_Perito`: texto livre — SÓ pendências do perito (ex: "aguardando eu enviar
-  o laudo", "aguardando levantamento do alvará"). Vazio = sem pendência do perito.
-- `Envolve_Perito` (aba Movimentacoes): `SIM` ou `NÃO`
+**Regras dos valores:**
+- `Numero_Processo`: número resumido (ex: `202552000005`) — é a chave que liga com a aba
+  Movimentacoes. `Numero_Unico`: o CNJ (ex: `0004795-37.2024.8.25.0034`).
+- `Situacao`: o texto que o site mostrar (JULGADO, EM ANDAMENTO, ARQUIVADO, SUSPENSO…).
+- `Envolve_Perito` (aba Movimentacoes): `SIM` ou `NÃO`.
 - `ID_Unico` (aba Movimentacoes): `Numero_Processo|Data_Movimento|Tipo_Movimento` — chave
-  anti-duplicação. Se preencher à mão, siga esse padrão; via sync é gerado sozinho.
+  anti-duplicação.
 
-**O painel deriva sozinho** (não precisa de coluna): as "etapas cumpridas" (Nomeado →
-Laudo → Honorários → Alvará → Recebido) e o card "Alvará a receber" saem desses campos.
-`Numero_Processo` é o número resumido (ex: `202552000005`); `Numero_Unico` é o CNJ.
+**O painel é um espelho das movimentações.** Ele lista os processos (nome/vara/situação da
+aba Processos) e, ao clicar, mostra a linha do tempo das movimentações, destacando as do
+perito (`Envolve_Perito`=SIM) e as de alvará (texto com "alvará"). Não infere etapas,
+pendências nem status de alvará.
 
 ---
 

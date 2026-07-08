@@ -51,7 +51,8 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
 .td-proc{width:150px;font-family:'DM Mono',monospace;font-size:12.5px;color:#1F3864;font-weight:600}
 .td-proc .cnj{font-size:9.5px;color:#94A3B8;font-weight:400;margin-top:2px;letter-spacing:-.2px}
 .td-vara{width:160px;font-size:12px}
-.td-req{width:190px;font-weight:500;line-height:1.35;font-size:12.5px}
+.td-req{width:170px;font-weight:500;line-height:1.35;font-size:12.5px}
+.td-sit{width:120px}
 .td-mov{line-height:1.35}
 .td-mov .data{font-family:'DM Mono',monospace;font-size:10.5px;color:#64748B}
 .td-mov .desc{font-size:12.5px;color:#1A2740;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:1px}
@@ -60,6 +61,13 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
 .tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;margin-right:4px}
 .tag-perito{background:#F3E8FF;color:#6B21A8;border:1px solid #E9D5FF}
 .tag-alvara{background:#FEF3C7;color:#B45309;border:1px solid #FCD34D}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap;text-transform:capitalize}
+.badge::before{content:"●";font-size:6px}
+.badge-and{background:#EFF6FF;color:#1E40AF}
+.badge-julg{background:#F0FDF4;color:#15803D}
+.badge-arq{background:#F1F5F9;color:#475569}
+.badge-susp{background:#FFF7ED;color:#B45309}
+.jdata{font-size:9.5px;color:#15803D;font-family:'DM Mono',monospace;margin-top:2px}
 .btn-icon{background:none;border:1px solid #E2EAF4;border-radius:8px;padding:4px 7px;cursor:pointer;font-size:12px;color:#64748B;transition:all .15s;display:inline-flex;align-items:center;gap:3px;font-family:'DM Sans',sans-serif}
 .btn-icon:hover{border-color:#2E5FA3;color:#2E5FA3}
 .vazio{text-align:center;padding:60px;color:#64748B;font-size:13px;display:none}
@@ -151,6 +159,7 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
 <div class="filtros">
   <input class="busca" type="text" id="fBusca" placeholder="🔎 Buscar processo, vara, requerente..." oninput="filtrar('busca',this.value)">
   <select id="fVara" onchange="filtrar('vara',this.value)"><option value="todas">Todas as varas</option></select>
+  <select id="fSituacao" onchange="filtrar('situacao',this.value)"><option value="todas">Todas as situações</option></select>
   <div class="sep"></div>
   <span class="cont-label" id="contLabel"></span>
   <button class="btn-atualizar" onclick="carregarDados()">↻ Atualizar</button>
@@ -162,6 +171,7 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
       <th class="td-proc">Nº do Processo</th>
       <th class="td-vara">Vara</th>
       <th class="td-req">Requerente</th>
+      <th class="td-sit">Situação</th>
       <th class="td-mov">Última movimentação</th>
       <th class="td-qtd">Movs.</th>
       <th class="td-acoes"></th>
@@ -199,7 +209,7 @@ const REQUERIDO_PADRAO = "Banco do Brasil";
 
 let idToken = null, userEmail = null;
 let PROCESSOS = [], MOVS = [];
-let F = {foco:"todos", vara:"todas", busca:""};
+let F = {foco:"todos", vara:"todas", situacao:"todas", busca:""};
 
 // === LOGIN ===
 function aguardarGSI(cb){
@@ -267,6 +277,7 @@ function aplicarDados(r){
     return (ua ? parseData(g(ua,"Data_Movimento"))||0 : 0) < (ub ? parseData(g(ub,"Data_Movimento"))||0 : 0) ? 1 : -1;
   });
   popularVaras();
+  popularSituacoes();
   render();
 }
 async function carregarDados(){
@@ -302,6 +313,22 @@ function popularVaras(){
   });
   if ([...sel.options].some(o => o.value === val)) sel.value = val;
 }
+function popularSituacoes(){
+  const sel = document.getElementById("fSituacao");
+  const val = sel.value;
+  while (sel.options.length > 1) sel.remove(1);
+  [...new Set(PROCESSOS.map(p => g(p,"Situacao")).filter(Boolean))].sort().forEach(s => {
+    const o = document.createElement("option"); o.value = s; o.textContent = s; sel.appendChild(o);
+  });
+  if ([...sel.options].some(o => o.value === val)) sel.value = val;
+}
+function classeSituacao(s){
+  s = String(s||"").toUpperCase();
+  if (s.indexOf("JULG") >= 0)   return "badge-julg";
+  if (s.indexOf("ARQUIV") >= 0) return "badge-arq";
+  if (s.indexOf("SUSPEN") >= 0) return "badge-susp";
+  return "badge-and";
+}
 
 function filtrar(campo, val){
   F[campo] = val;
@@ -317,6 +344,7 @@ function processosFiltrados(){
   return PROCESSOS.filter(p => {
     const num = g(p,"Numero_Processo");
     if (F.vara !== "todas" && g(p,"Vara") !== F.vara) return false;
+    if (F.situacao !== "todas" && g(p,"Situacao") !== F.situacao) return false;
     if (F.foco === "alvara" && !temAlvara(num)) return false;
     if (F.foco === "perito" && !temPerito(num)) return false;
     if (q) {
@@ -362,10 +390,15 @@ function render(){
       movHtml = '<span style="color:#94A3B8;font-size:12px">Sem movimentação registrada</span>';
     }
 
+    const sit = g(p,"Situacao");
+    let sitHtml = sit ? '<span class="badge '+classeSituacao(sit)+'">'+esc(sit.toLowerCase())+'</span>' : '<span style="color:#94A3B8">—</span>';
+    if (sit && /JULG/i.test(sit) && g(p,"Data_Julgamento")) sitHtml += '<div class="jdata">'+esc(g(p,"Data_Julgamento"))+'</div>';
+
     tr.innerHTML =
         '<td class="td-proc">'+(num||"—")+(cnj?'<div class="cnj">'+cnj+'</div>':'')+'</td>'
       + '<td class="td-vara">'+(g(p,"Vara")||"—")+'</td>'
       + '<td class="td-req">'+(g(p,"Requerente")||"—")+'</td>'
+      + '<td class="td-sit">'+sitHtml+'</td>'
       + '<td class="td-mov">'+movHtml+'</td>'
       + '<td class="td-qtd">'+movs.length+'</td>'
       + '<td class="td-acoes"><button class="btn-icon" onclick=\'abrirProcesso('+JSON.stringify(num)+')\' title="Linha do tempo">🔍</button></td>';
@@ -381,8 +414,12 @@ function abrirProcesso(num){
   if (!p) return;
   _procAtual = num;
   document.getElementById("modalTitulo").textContent = g(p,"Requerente") || ("Processo " + num);
-  document.getElementById("modalSub").textContent =
-    (g(p,"Numero_Processo")||"") + (g(p,"Numero_Unico")?"  ·  "+g(p,"Numero_Unico"):"") + (g(p,"Vara")?"  ·  "+g(p,"Vara"):"") + "  ·  Requerido: " + (g(p,"Requerido")||REQUERIDO_PADRAO);
+  const partes = [g(p,"Numero_Processo")];
+  if (g(p,"Numero_Unico")) partes.push(g(p,"Numero_Unico"));
+  if (g(p,"Vara")) partes.push(g(p,"Vara"));
+  if (g(p,"Situacao")) partes.push(g(p,"Situacao") + (/JULG/i.test(g(p,"Situacao")) && g(p,"Data_Julgamento") ? " em " + g(p,"Data_Julgamento") : ""));
+  partes.push("Requerido: " + (g(p,"Requerido")||REQUERIDO_PADRAO));
+  document.getElementById("modalSub").textContent = partes.join("  ·  ");
   atualizarBotoesTL();
   renderTimeline(num);
   abrirModal();
