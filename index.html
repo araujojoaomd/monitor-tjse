@@ -305,10 +305,71 @@ async function chamar(payload){
 }
 
 function aplicarDados(r){
-  PROCESSOS = r.processos || [];
+  const rawProc = r.processos || [];
   MOVS = r.movimentacoes || [];
+  // Identidade (Vara, Requerente, CNJ...) vem da aba Processos; o STATUS é derivado das movimentações.
+  const identPorNum = {};
+  rawProc.forEach(p => { const n = g(p,"Numero_Processo"); if (n) identPorNum[n] = p; });
+  const nums = new Set();
+  rawProc.forEach(p => { const n = g(p,"Numero_Processo"); if (n) nums.add(n); });
+  MOVS.forEach(m => { const n = g(m,"Numero_Processo"); if (n) nums.add(n); });
+  PROCESSOS = [...nums].map(n => {
+    const ident = identPorNum[n] || {Numero_Processo:n};
+    const ms = MOVS.filter(m => String(g(m,"Numero_Processo")) === String(n));
+    if (!ms.length) return ident;                 // sem movimentos: mantém o que houver na aba
+    return Object.assign({}, ident, derivarProcesso(n)); // status derivado sobrescreve
+  });
   popularVaras();
   render();
+}
+
+// === DERIVAÇÃO: traduz as movimentações no status do processo ===
+function textoMov(m){ return g(m,"Tipo_Movimento") + " " + g(m,"Descricao"); }
+
+function derivarProcesso(num){
+  const ms = MOVS.filter(m => String(g(m,"Numero_Processo")) === String(num))
+    .sort((a,b) => (parseData(g(b,"Data_Movimento"))||0) - (parseData(g(a,"Data_Movimento"))||0)); // mais recente primeiro
+  const d = {Numero_Processo:num};
+  if (ms.length){ d.Data_Ultima_Mov = g(ms[0],"Data_Movimento"); d.Descricao_Ultima_Mov = g(ms[0],"Descricao"); }
+  const tem = re => ms.some(m => re.test(textoMov(m)));
+  const dataDe = re => { for (const m of ms) if (re.test(textoMov(m))) return g(m,"Data_Movimento"); return ""; };
+
+  // Situação (varre do mais recente pro mais antigo; primeiro marcador vence)
+  d.Situacao = "Em andamento";
+  for (const m of ms){ const t = textoMov(m);
+    if (/arquiv|baixa\s+defin/i.test(t)) { d.Situacao = "Arquivado"; break; }
+    if (/suspens/i.test(t))              { d.Situacao = "Suspenso";  break; }
+    if (/senten[çc]a/i.test(t))          { d.Situacao = "Julgado";   break; }
+  }
+
+  // Etapas do perito (permite palavras entre "nomea..." e "perito")
+  d.Nomeado = tem(/nomea\w*[\s\S]{0,25}perit|perit\w*[\s\S]{0,25}nomead/i) ? "SIM" : "NÃO";
+  const reLaudo = /juntad\w*\s+d?[eo]?\s*laudo|laudo\s+peric\w*\s+juntad|apresenta[çc][ãa]o\s+d[eo]\s+laudo|protocol\w*\s+d?[eo]?\s*laudo|juntad\w*\s+do\s+laudo/i;
+  d.Laudo_Entregue = tem(reLaudo) ? "SIM" : "NÃO";
+  d.Data_Laudo = d.Laudo_Entregue === "SIM" ? dataDe(reLaudo) : "";
+  d.Honorarios_Arbitrados = tem(/arbitr\w*[\s\S]{0,25}honor|honor\w*[\s\S]{0,25}arbitr|fix\w+[\s\S]{0,25}honor/i) ? "SIM" : "NÃO";
+
+  // Alvará (o mais importante)
+  const reReceb = /levantament|alvar\w*[\s\S]{0,25}levantad|levantad\w*[\s\S]{0,25}alvar|sacad\w*[\s\S]{0,25}alvar|alvar\w*[\s\S]{0,25}sacad|honor\w*[\s\S]{0,25}pag|pagament\w*[\s\S]{0,25}honor|alvar\w*[\s\S]{0,25}recebid|comprovante\s+de\s+levantament/i;
+  const reExped = /expedi\w*[\s\S]{0,25}alvar|alvar\w*[\s\S]{0,25}expedid|emiss[ãa]o\s+de\s+alvar|expedi[çc][ãa]o\s+de\s+alvar|alvar\w*[\s\S]{0,25}eletr[ôo]nic|alvar\w*[\s\S]{0,25}dispon|dispon\w*[\s\S]{0,25}alvar|liber\w*[\s\S]{0,25}alvar/i;
+  const recebido = tem(reReceb), expedido = tem(reExped);
+  d.Alvara_Status = recebido ? "Recebido" : (expedido ? "Expedido" : "");
+  d.Data_Alvara = d.Alvara_Status ? dataDe(/alvar|levantament/i) : "";
+  // se há alvará, os honorários já foram necessariamente arbitrados
+  if (d.Alvara_Status) d.Honorarios_Arbitrados = "SIM";
+
+  // Valor dos honorários (primeiro R$ num movimento que fale de honorários/alvará)
+  d.Valor_Honorarios = "";
+  for (const m of ms){ const t = textoMov(m); if (/honor|alvar/i.test(t)){ const v = t.match(/R\$\s?[\d\.]+,\d{2}/); if (v){ d.Valor_Honorarios = v[0]; break; } } }
+
+  // Pendência do perito (derivada do estágio; Recebido = concluído, sem pendência)
+  if (d.Alvara_Status === "Recebido")                                      d.Pendencia_Perito = "";
+  else if (d.Alvara_Status === "Expedido")                                 d.Pendencia_Perito = "aguardando levantamento do alvará";
+  else if (d.Laudo_Entregue === "SIM" && d.Honorarios_Arbitrados === "NÃO") d.Pendencia_Perito = "aguardando arbitramento dos honorários";
+  else if (d.Nomeado === "SIM" && d.Laudo_Entregue === "NÃO")              d.Pendencia_Perito = "aguardando eu enviar o laudo";
+  else                                                                      d.Pendencia_Perito = "";
+
+  return d;
 }
 async function carregarDados(){
   if (!idToken) return;
