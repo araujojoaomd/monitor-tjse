@@ -31,7 +31,21 @@ body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:#1A2740;min-heigh
 .card .leg{font-size:11px;color:#64748B;font-weight:500;margin-top:2px}
 .card .ico{font-size:20px}
 .c-tot{color:#1F3864}.c-alv{color:#B45309}.c-per{color:#6B21A8}
-.filtros{max-width:1500px;margin:0 auto;padding:12px 28px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid #E2EAF4;background:#fff}
+.recentes{max-width:1500px;margin:0 auto;padding:14px 28px 6px;background:#fff}
+.recentes-hd{font-size:11px;font-weight:700;color:#1F3864;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.recentes-hd .cnt{font-size:10px;font-weight:600;color:#64748B;background:#EEF4FB;padding:2px 8px;border-radius:10px;letter-spacing:0}
+.rec-lista{display:flex;flex-direction:column;gap:6px;max-height:236px;overflow-y:auto}
+.rec-item{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border:1px solid #E2EAF4;border-radius:10px;cursor:pointer;transition:all .12s}
+.rec-item:hover{border-color:#2E5FA3;background:#F8FAFC}
+.rec-item.alvara{border-left:3px solid #F59E0B;background:#FFFBEB}
+.rec-item.perito{border-left:3px solid #8B5CF6;background:#FAF5FF}
+.rec-data{font-family:'DM Mono',monospace;font-size:11px;color:#64748B;white-space:nowrap;padding-top:1px;min-width:74px}
+.rec-body{flex:1;min-width:0}
+.rec-proc{font-family:'DM Mono',monospace;font-size:11px;color:#1F3864;font-weight:600}
+.rec-req{font-size:11px;color:#64748B;font-weight:400;margin-left:6px}
+.rec-desc{font-size:12.5px;color:#1A2740;line-height:1.35;margin-top:2px}
+.rec-vazio{font-size:12.5px;color:#64748B;font-style:italic;padding:6px 0}
+.filtros{max-width:1500px;margin:0 auto;padding:12px 28px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid #E2EAF4;border-top:1px solid #E2EAF4;background:#fff}
 .filtros select,.filtros input{font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid #E2EAF4;background:#fff;font-family:'DM Sans',sans-serif;color:#1A2740}
 .filtros select{cursor:pointer}
 .filtros input.busca{min-width:220px}
@@ -136,7 +150,7 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
       </div>
     </div>
     <div class="pnl-header-right">
-      <div class="lbl">Atualizado em</div>
+      <div class="lbl">Última consulta</div>
       <div class="dt" id="dt">—</div>
       <div class="usr"><span id="userEmail"></span><button class="btn-sair" onclick="sair()">Sair</button></div>
     </div>
@@ -155,6 +169,10 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
       <div><div class="num c-per" id="n-per">—</div><div class="leg">Com movimentação do perito</div></div>
     </div>
   </div>
+</div>
+<div class="recentes">
+  <div class="recentes-hd">Movimentações dos últimos 7 dias <span class="cnt" id="recCount">0</span></div>
+  <div class="rec-lista" id="recLista"></div>
 </div>
 <div class="filtros">
   <input class="busca" type="text" id="fBusca" placeholder="🔎 Buscar processo, vara, requerente..." oninput="filtrar('busca',this.value)">
@@ -330,6 +348,40 @@ function classeSituacao(s){
   return "badge-and";
 }
 
+function fmtData(d){ return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); }
+
+function atualizarDataConsulta(){
+  const el = document.getElementById("dt");
+  const datas = PROCESSOS.map(p => parseData(g(p,"Data_Consulta"))).filter(Boolean);
+  if (!datas.length) { el.textContent = "—"; return; }
+  el.textContent = fmtData(new Date(Math.max.apply(null, datas.map(d => d.getTime()))));
+}
+
+function renderRecentes(){
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const limite = new Date(hoje.getTime() - 7*86400000);
+  const recentes = MOVS.filter(m => { const d = parseData(g(m,"Data_Movimento")); return d && d >= limite; })
+    .sort((a,b) => (parseData(g(b,"Data_Movimento"))||0) - (parseData(g(a,"Data_Movimento"))||0));
+  document.getElementById("recCount").textContent = recentes.length;
+  const el = document.getElementById("recLista");
+  if (!recentes.length) { el.innerHTML = '<div class="rec-vazio">Nenhuma movimentação nos últimos 7 dias.</div>'; return; }
+  const reqPorNum = {};
+  PROCESSOS.forEach(p => { reqPorNum[g(p,"Numero_Processo")] = g(p,"Requerente"); });
+  el.innerHTML = recentes.map(m => {
+    const num = g(m,"Numero_Processo");
+    const perito = movPerito(m), alvara = movAlvara(m);
+    const cls = alvara ? "alvara" : (perito ? "perito" : "");
+    let tags = "";
+    if (alvara) tags += ' <span class="tag tag-alvara">alvará</span>';
+    if (perito) tags += ' <span class="tag tag-perito">perito</span>';
+    const req = reqPorNum[num] ? '<span class="rec-req">'+esc(reqPorNum[num])+'</span>' : '';
+    return '<div class="rec-item '+cls+'" onclick=\'abrirProcesso('+JSON.stringify(num)+')\'>'
+      + '<div class="rec-data">'+g(m,"Data_Movimento")+'</div>'
+      + '<div class="rec-body"><div class="rec-proc">'+num+req+tags+'</div>'
+      + '<div class="rec-desc">'+esc(g(m,"Descricao"))+'</div></div></div>';
+  }).join("");
+}
+
 function filtrar(campo, val){
   F[campo] = val;
   if (campo === "foco") {
@@ -360,6 +412,8 @@ function render(){
   document.getElementById("n-tot").textContent = PROCESSOS.length;
   document.getElementById("n-alv").textContent = PROCESSOS.filter(p => temAlvara(g(p,"Numero_Processo"))).length;
   document.getElementById("n-per").textContent = PROCESSOS.filter(p => temPerito(g(p,"Numero_Processo"))).length;
+  atualizarDataConsulta();
+  renderRecentes();
 
   const filtrados = processosFiltrados();
   document.getElementById("contLabel").textContent = filtrados.length === PROCESSOS.length
@@ -419,6 +473,7 @@ function abrirProcesso(num){
   if (g(p,"Vara")) partes.push(g(p,"Vara"));
   if (g(p,"Situacao")) partes.push(g(p,"Situacao") + (/JULG/i.test(g(p,"Situacao")) && g(p,"Data_Julgamento") ? " em " + g(p,"Data_Julgamento") : ""));
   partes.push("Requerido: " + (g(p,"Requerido")||REQUERIDO_PADRAO));
+  if (g(p,"Data_Consulta")) partes.push("Consultado em " + g(p,"Data_Consulta"));
   document.getElementById("modalSub").textContent = partes.join("  ·  ");
   atualizarBotoesTL();
   renderTimeline(num);
@@ -471,8 +526,6 @@ function toast(msg, err){
   toastTimer = setTimeout(function(){ t.className = "toast" + (err ? " err" : ""); }, 2500);
 }
 
-document.getElementById("dt").textContent = new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"})
-  + " · " + new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
 </script>
 </body>
 </html>

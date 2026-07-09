@@ -26,15 +26,17 @@ o Claude não tem como. Siga os passos abaixo na ordem. Ao final, o painel está
 2. Crie **duas abas** com estes nomes exatos (respeite maiúsculas/acentos):
    - `Processos`
    - `Movimentacoes` (sem acento no "ç" — é só a aba; o painel usa esse nome exato)
-3. Na aba **Processos**, cole na **linha 1** (cabeçalho), uma coluna por célula A1..G1:
+3. Na aba **Processos**, cole na **linha 1** (cabeçalho), uma coluna por célula A1..H1:
 
 ```
-Numero_Processo	Numero_Unico	Vara	Requerente	Requerido	Situacao	Data_Julgamento
+Numero_Processo	Numero_Unico	Vara	Requerente	Requerido	Situacao	Data_Julgamento	Data_Consulta
 ```
 
 Só identidade + situação (capturadas do site, não inferidas). `Vara` = campo "Competência"
 do e-SAJ. `Situacao` = campo "Situação" (JULGADO, EM ANDAMENTO, ARQUIVADO…). `Data_Julgamento`
-só quando JULGADO. Todo o status do perito/alvará o painel mostra a partir das MOVIMENTAÇÕES.
+só quando JULGADO. `Data_Consulta` = data em que o processo foi consultado por último (o
+Claude preenche com a data do dia; o painel mostra a mais recente como "Última consulta").
+Todo o status do perito/alvará o painel mostra a partir das MOVIMENTAÇÕES.
 
 4. Na aba **Movimentacoes**, cole na **linha 1**, A1..F1:
 
