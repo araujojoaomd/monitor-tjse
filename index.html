@@ -31,10 +31,18 @@ body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:#1A2740;min-heigh
 .card .leg{font-size:11px;color:#64748B;font-weight:500;margin-top:2px}
 .card .ico{font-size:20px}
 .c-tot{color:#1F3864}.c-alv{color:#B45309}.c-per{color:#6B21A8}
-.recentes{max-width:1500px;margin:0 auto;padding:14px 28px 6px;background:#fff}
-.recentes-hd{font-size:11px;font-weight:700;color:#1F3864;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.recentes-hd .cnt{font-size:10px;font-weight:600;color:#64748B;background:#EEF4FB;padding:2px 8px;border-radius:10px;letter-spacing:0}
+.abas{max-width:1500px;margin:0 auto;display:flex;align-items:center;gap:4px;padding:0 28px;background:#fff;border-bottom:1px solid #E2EAF4}
+.aba{background:none;border:none;border-bottom:2px solid transparent;padding:12px 16px;font-size:13px;font-weight:600;color:#64748B;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:-1px}
+.aba:hover{color:#1F3864}
+.aba.on{color:#1F3864;border-bottom-color:#1F3864}
+.recentes{max-width:1500px;margin:0 auto;padding:16px 28px 24px;background:#fff}
+.recentes-hd{font-size:11px;font-weight:700;color:#1F3864;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.recentes-hd .cnt{font-size:10px;font-weight:600;color:#64748B;background:#EEF4FB;padding:2px 8px;border-radius:10px;letter-spacing:0;margin-left:6px}
+.dias-filtro{display:flex;gap:5px}
+.dbtn{font-size:11px;font-weight:600;padding:4px 11px;border-radius:20px;border:1px solid #E2EAF4;background:#fff;color:#64748B;cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:none;letter-spacing:0}
+.dbtn.on{background:#1F3864;color:#fff;border-color:#1F3864}
 .rec-lista{display:flex;flex-direction:column;gap:6px;max-height:236px;overflow-y:auto}
+.rec-lista-full{max-height:none}
 .rec-item{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border:1px solid #E2EAF4;border-radius:10px;cursor:pointer;transition:all .12s}
 .rec-item:hover{border-color:#2E5FA3;background:#F8FAFC}
 .rec-item.alvara{border-left:3px solid #F59E0B;background:#FFFBEB}
@@ -70,7 +78,8 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
 .td-mov{line-height:1.35}
 .td-mov .data{font-family:'DM Mono',monospace;font-size:10.5px;color:#64748B}
 .td-mov .desc{font-size:12.5px;color:#1A2740;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:1px}
-.td-qtd{width:80px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:#64748B}
+.td-qtd{width:70px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:#64748B}
+.td-consulta{width:100px;font-family:'DM Mono',monospace;font-size:11px;color:#64748B}
 .td-acoes{width:56px;text-align:center;white-space:nowrap}
 .tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;margin-right:4px}
 .tag-perito{background:#F3E8FF;color:#6B21A8;border:1px solid #E9D5FF}
@@ -123,7 +132,7 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
   .filtros{padding:10px 16px}
   .tabela-wrap{padding:12px 16px 32px}
   td{padding:9px 10px;font-size:12px}
-  .td-vara,.td-qtd{display:none}
+  .td-vara,.td-qtd,.td-consulta{display:none}
 }
 </style>
 </head>
@@ -156,47 +165,66 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle;overflow:hidden}
     </div>
   </div>
 </div>
-<div style="background:#EEF4FB;border-bottom:1px solid #E2EAF4">
-  <div class="cards">
-    <div class="card sel" id="card-todos" onclick="filtrar('foco','todos')">
-      <div><div class="num c-tot" id="n-tot">—</div><div class="leg">Processos</div></div>
+<div class="abas">
+  <button class="aba on" id="aba-movs" onclick="setAba('movs')">Últimas movimentações</button>
+  <button class="aba" id="aba-proc" onclick="setAba('proc')">Processos</button>
+  <div style="flex:1"></div>
+  <button class="btn-atualizar" style="margin:6px 0" onclick="carregarDados()">↻ Atualizar</button>
+</div>
+
+<div id="view-movs">
+  <div class="recentes">
+    <div class="recentes-hd">
+      <span>Últimas movimentações <span class="cnt" id="recCount">0</span></span>
+      <div class="dias-filtro">
+        <button class="dbtn on" id="d-7"  onclick="setDias(7)">7 dias</button>
+        <button class="dbtn"    id="d-15" onclick="setDias(15)">15 dias</button>
+        <button class="dbtn"    id="d-30" onclick="setDias(30)">30 dias</button>
+      </div>
     </div>
-    <div class="card card-alvara" id="card-alvara" onclick="filtrar('foco','alvara')">
-      <div class="ico">💰</div>
-      <div><div class="num c-alv" id="n-alv">—</div><div class="leg">Com movimentação de alvará</div></div>
-    </div>
-    <div class="card" id="card-perito" onclick="filtrar('foco','perito')">
-      <div><div class="num c-per" id="n-per">—</div><div class="leg">Com movimentação do perito</div></div>
-    </div>
+    <div class="rec-lista rec-lista-full" id="recLista"></div>
   </div>
 </div>
-<div class="recentes">
-  <div class="recentes-hd">Movimentações dos últimos 7 dias <span class="cnt" id="recCount">0</span></div>
-  <div class="rec-lista" id="recLista"></div>
-</div>
-<div class="filtros">
-  <input class="busca" type="text" id="fBusca" placeholder="🔎 Buscar processo, vara, requerente..." oninput="filtrar('busca',this.value)">
-  <select id="fVara" onchange="filtrar('vara',this.value)"><option value="todas">Todas as varas</option></select>
-  <select id="fSituacao" onchange="filtrar('situacao',this.value)"><option value="todas">Todas as situações</option></select>
-  <div class="sep"></div>
-  <span class="cont-label" id="contLabel"></span>
-  <button class="btn-atualizar" onclick="carregarDados()">↻ Atualizar</button>
-</div>
-<div class="tabela-wrap">
-  <div class="loading" id="loading">Carregando dados da planilha...</div>
-  <table id="tab" style="display:none">
-    <thead><tr>
-      <th class="td-proc">Nº do Processo</th>
-      <th class="td-vara">Vara</th>
-      <th class="td-req">Requerente</th>
-      <th class="td-sit">Situação</th>
-      <th class="td-mov">Última movimentação</th>
-      <th class="td-qtd">Movs.</th>
-      <th class="td-acoes"></th>
-    </tr></thead>
-    <tbody id="tbody"></tbody>
-  </table>
-  <div class="vazio" id="vazio">Nenhum processo encontrado.</div>
+
+<div id="view-proc" style="display:none">
+  <div style="background:#EEF4FB;border-bottom:1px solid #E2EAF4">
+    <div class="cards">
+      <div class="card sel" id="card-todos" onclick="filtrar('foco','todos')">
+        <div><div class="num c-tot" id="n-tot">—</div><div class="leg">Processos</div></div>
+      </div>
+      <div class="card card-alvara" id="card-alvara" onclick="filtrar('foco','alvara')">
+        <div class="ico">💰</div>
+        <div><div class="num c-alv" id="n-alv">—</div><div class="leg">Com movimentação de alvará</div></div>
+      </div>
+      <div class="card" id="card-perito" onclick="filtrar('foco','perito')">
+        <div><div class="num c-per" id="n-per">—</div><div class="leg">Com movimentação do perito</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="filtros">
+    <input class="busca" type="text" id="fBusca" placeholder="🔎 Buscar processo, vara, requerente..." oninput="filtrar('busca',this.value)">
+    <select id="fVara" onchange="filtrar('vara',this.value)"><option value="todas">Todas as varas</option></select>
+    <select id="fSituacao" onchange="filtrar('situacao',this.value)"><option value="todas">Todas as situações</option></select>
+    <div class="sep"></div>
+    <span class="cont-label" id="contLabel"></span>
+  </div>
+  <div class="tabela-wrap">
+    <div class="loading" id="loading">Carregando dados da planilha...</div>
+    <table id="tab" style="display:none">
+      <thead><tr>
+        <th class="td-proc">Nº do Processo</th>
+        <th class="td-vara">Vara</th>
+        <th class="td-req">Requerente</th>
+        <th class="td-sit">Situação</th>
+        <th class="td-mov">Última movimentação</th>
+        <th class="td-qtd">Movs.</th>
+        <th class="td-consulta">Consultado em</th>
+        <th class="td-acoes"></th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="vazio" id="vazio">Nenhum processo encontrado.</div>
+  </div>
 </div>
 <div class="rodape">Monitoramento de processos periciais — espelho das movimentações capturadas no TJSE</div>
 </div>
@@ -227,7 +255,8 @@ const REQUERIDO_PADRAO = "Banco do Brasil";
 
 let idToken = null, userEmail = null;
 let PROCESSOS = [], MOVS = [];
-let F = {foco:"todos", vara:"todas", situacao:"todas", busca:""};
+let F = {foco:"todos", vara:"todas", situacao:"todas", busca:"", dias:7};
+let ABA = "movs";
 
 // === LOGIN ===
 function aguardarGSI(cb){
@@ -357,9 +386,22 @@ function atualizarDataConsulta(){
   el.textContent = fmtData(new Date(Math.max.apply(null, datas.map(d => d.getTime()))));
 }
 
+function setAba(aba){
+  ABA = aba;
+  document.getElementById("view-movs").style.display = aba === "movs" ? "" : "none";
+  document.getElementById("view-proc").style.display = aba === "proc" ? "" : "none";
+  document.getElementById("aba-movs").className = "aba" + (aba === "movs" ? " on" : "");
+  document.getElementById("aba-proc").className = "aba" + (aba === "proc" ? " on" : "");
+}
+function setDias(n){
+  F.dias = n;
+  [7,15,30].forEach(d => { document.getElementById("d-"+d).className = "dbtn" + (d === n ? " on" : ""); });
+  renderRecentes();
+}
+
 function renderRecentes(){
   const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const limite = new Date(hoje.getTime() - 7*86400000);
+  const limite = new Date(hoje.getTime() - F.dias*86400000);
   const recentes = MOVS.filter(m => { const d = parseData(g(m,"Data_Movimento")); return d && d >= limite; })
     .sort((a,b) => (parseData(g(b,"Data_Movimento"))||0) - (parseData(g(a,"Data_Movimento"))||0));
   document.getElementById("recCount").textContent = recentes.length;
@@ -455,6 +497,7 @@ function render(){
       + '<td class="td-sit">'+sitHtml+'</td>'
       + '<td class="td-mov">'+movHtml+'</td>'
       + '<td class="td-qtd">'+movs.length+'</td>'
+      + '<td class="td-consulta">'+(g(p,"Data_Consulta")||'<span style="color:#94A3B8">—</span>')+'</td>'
       + '<td class="td-acoes"><button class="btn-icon" onclick=\'abrirProcesso('+JSON.stringify(num)+')\' title="Linha do tempo">🔍</button></td>';
     tbody.appendChild(tr);
   });
